@@ -327,9 +327,9 @@ function maxPts(){
 }
 function scoreBand(pct){
  // same bands everywhere: % of that day's maxPts
- if(pct>=80)return {tag:"穩陣",ok:1,short:"合理 ✅",line:"【穩陣 ✅】約 "+pct+"%，呢個分數合理，可以放心用喺諮詢。",next:"想再穩可以掃下弱關；唔急都得。"};
- if(pct>=50)return {tag:"建議再溫",ok:0,short:"唔穩陣 ⚠️",line:"【建議再溫 ⚠️】約 "+pct+"%，暫時唔穩陣，建議返去答錯過／未 lock 嘅關再練。",next:"撳「再玩一次」或者返目錄重入呢日。"};
- return {tag:"要重溫",ok:-1,short:"未夠 🔁",line:"【要重溫 🔁】約 "+pct+"%，未夠合理水平，一定要再玩／重溫呢日先好。",next:"由頭再嚟一次，答錯嘅會再問到你記住。"};
+ if(pct>=80)return {tag:"穩陣",ok:1,short:"穩陣 ✅",line:"【穩陣 ✅】約 "+pct+"%，記得幾熟，可以應付學生。",next:"想再穩可以掃下弱關；唔急都得。"};
+ if(pct>=50)return {tag:"建議再溫",ok:0,short:"建議再溫 ⚠️",line:"【建議再溫 ⚠️】約 "+pct+"%，有啲未熟，揀錯咗嘅關再練下。",next:"撳「再玩一次」或者返目錄重入呢日。"};
+ return {tag:"要重溫",ok:-1,short:"要重溫 🔁",line:"【要重溫 🔁】約 "+pct+"%，呢日要由頭再做一次。",next:"由頭再嚟一次，答錯嘅會再問到你記住。"};
 }
 function cheer(pct,retried){
  var b=scoreBand(pct),line=b.line+"<br>"+b.next;
@@ -345,7 +345,7 @@ function finish(){
  var noteN=0;try{var all=JSON.parse(localStorage.getItem("sunderland-course-notes")||"{}");for(var k in all)if(k.indexOf(KEY+":")==0)noteN++}catch(e){}
  var notesLine=noteN?'<br>📝 你喺今日更新咗 '+noteN+' 條 ⚠️ 更正（只喺呢部機）':'';
  var rev='<br><span style="color:var(--muted)">之後想溫可以隨時返嚟再玩；開工後都得。</span>';
- var how='<br><span style="color:var(--muted);font-size:13px">滿分＝今日每關都做好一次嘅最高分；徽章係趣味目標，睇合唔合理用上面 %。</span>';
+ var how='<br><span style="color:var(--muted);font-size:13px">滿分＝今日每關都做好一次嘅最高分；徽章係趣味目標，睇熟唔熟用上面 %。</span>';
  $("fsum").innerHTML="你攞到 <b>"+st.pts+"</b>／滿分 <b>"+mx+"</b>（"+pct+"%）· <b>"+band.tag+"</b><br>"+cheer(pct,!!st.quizRetry)+"<br>完成 "+c+"/"+N+" 關 · 用咗 "+fmt(TOTAL-st.time)+how+"<br>"+D.bye+notesLine+rev;
  if(!st.done){st.done=true;st.doneDate=todayISO()}st.marked=false;st.score=st.pts;st.max=mx;st.pct=pct;save();confetti(120);
 }
@@ -376,9 +376,9 @@ function dayMaxPts(d){
  return m;
 }
 function scoreBand(pct){
- if(pct>=80)return {tag:"穩陣",hint:"合理，可以放心用"};
- if(pct>=50)return {tag:"建議再溫",hint:"唔穩陣，返去弱關再練"};
- return {tag:"要重溫",hint:"未夠，一定要再玩呢日"};
+ if(pct>=80)return {tag:"穩陣",hint:"記得幾熟，可以應付學生"};
+ if(pct>=50)return {tag:"建議再溫",hint:"有啲未熟，揀錯咗嘅關再練下"};
+ return {tag:"要重溫",hint:"呢日要由頭再做一次"};
 }
 function home(){
  clearInterval(TIMER);document.body.classList.add("home");document.getElementById("htitle").textContent="Sunderland HK 自學課程";
@@ -408,7 +408,7 @@ function home(){
  var notes={};try{notes=JSON.parse(localStorage.getItem("sunderland-course-notes")||"{}")}catch(e){}
  var nkeys=Object.keys(notes);
  var notesBlock=nkeys.length?'<div class="box"><b>我嘅更正 📝</b><p class="sub" style="margin:6px 0">'+nkeys.length+' 條已儲喺呢部機。有 ⚠️ 嘅知識卡可以再撳「更新」。</p>'+nkeys.slice(0,8).map(function(k){var v=notes[k].replace(/</g,"&lt;").replace(/\n/g,"<br>");return '<div style="font-size:13px;margin:8px 0;padding:8px;background:var(--card);border-radius:10px"><div class="tag" style="color:var(--ok)">你已更新</div>'+v+'</div>'}).join("")+(nkeys.length>8?'<p class="sub">…仲有 '+(nkeys.length-8)+' 條</p>':'')+'</div>':'';
- var legend='<div class="box"><b>分數點睇？</b><ul class="tight" style="margin:8px 0 0;padding-left:1.2em;font-size:13px;color:var(--muted)"><li>每日分數＝做齊關卡攞到嘅分；<b>滿分</b>＝每關都做好一次嘅最高分</li><li><b>≥80%</b> 穩陣（合理，可以放心用）· <b>50–79%</b> 建議再溫 · <b>＜50%</b> 要重溫</li><li><b>總分</b>＝各日分數加埋，睇整體勤力度，唔係「過關線」</li></ul></div>';
+ var legend='<div class="box"><b>分數點睇？</b><ul class="tight" style="margin:8px 0 0;padding-left:1.2em;font-size:13px;color:var(--muted)"><li>每日分數＝做齊關卡攞到嘅分；<b>滿分</b>＝每關都做好一次嘅最高分</li><li><b>≥80%</b> 穩陣（記得幾熟，可以應付學生）· <b>50–79%</b> 建議再溫（有啲未熟，揀錯咗嘅關再練下）· <b>＜50%</b> 要重溫（呢日要由頭再做一次）</li><li><b>總分</b>＝各日分數加埋，睇整體勤力度，唔係「過關線」</li></ul></div>';
  var advBanner=advNeed?'<div class="box" style="border:2px solid var(--warn,#f4a03a);background:rgba(244,160,58,.12)"><b>進階版 Day 1–4</b><p class="sub" style="margin:6px 0 0">呢幾日加深咗（角色扮演、objection、FAQ 陷阱），大約 <b>25 分鐘</b>一日。<br>舊版完成紀錄唔再算過關——<b>要再考過先算 ✅</b>。仲有 '+advNeed+' 日未完成進階版。</p></div>':'';
  var totLabel=maxSum?pts+"／"+maxSum:String(pts);
  document.getElementById("home").innerHTML='<section class="on"><h2>自學課程 📚</h2><p class="sub">每日大約 <b>25 分鐘（進階）</b>，一日一課。<br><b>進階版</b>：已完成日子要再考過先算過關（Day 1–4）。<br>開工後都可以返嚟溫；答錯嘅會再問到你記住，⚠️ 確認咗仲可以自己改。</p>'+advBanner+notesBlock+legend+'<div class="kpis"><div class="kpi"><b>'+done+'/'+C.length+'</b><small>總進度 '+pct+'%</small></div><div class="kpi"><b>'+totLabel+'</b><small>總分／各日滿分加埋</small></div><div class="kpi"><b>🔥 '+sk+'</b><small>連續日數</small></div></div>'+rows.join("")+'</section>';
