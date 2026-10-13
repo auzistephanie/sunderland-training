@@ -325,25 +325,29 @@ function maxPts(){
  });
  return m;
 }
+function scoreBand(pct){
+ // same bands everywhere: % of that day's maxPts
+ if(pct>=80)return {tag:"穩陣",ok:1,short:"合理 ✅",line:"【穩陣 ✅】約 "+pct+"%，呢個分數合理，可以放心用喺諮詢。",next:"想再穩可以掃下弱關；唔急都得。"};
+ if(pct>=50)return {tag:"建議再溫",ok:0,short:"唔穩陣 ⚠️",line:"【建議再溫 ⚠️】約 "+pct+"%，暫時唔穩陣，建議返去答錯過／未 lock 嘅關再練。",next:"撳「再玩一次」或者返目錄重入呢日。"};
+ return {tag:"要重溫",ok:-1,short:"未夠 🔁",line:"【要重溫 🔁】約 "+pct+"%，未夠合理水平，一定要再玩／重溫呢日先好。",next:"由頭再嚟一次，答錯嘅會再問到你記住。"};
+}
 function cheer(pct,retried){
- var line;
- if(pct>=95)line="勁呀！基本上滿分，你真係記得晒！🎉";
- else if(pct>=80)line="好叻！差少少就滿分，難嘅位再掃一次就穩陣。";
- else if(pct>=55)line="做得唔錯呀，有啲位未 lock 實，返嚟再練就得 💪";
- else line="慢慢嚟都係進步，溫多次就記住，唔使急 🌱";
+ var b=scoreBand(pct),line=b.line+"<br>"+b.next;
+ if(pct>=95)line="勁呀！基本上滿分 🎉<br>"+b.line+"<br>"+b.next;
  if(retried)line+="<br>啱啱答錯嘅你都捱到全部記住，好有毅力 ❤️";
  return line;
 }
 function finish(){
  var B=D.badges,b=st.pts>=B[0][0]?B[0]:st.pts>=B[1][0]?B[1]:B[2];
- var mx=maxPts(),pct=mx?Math.round(st.pts/mx*100):0;
+ var mx=maxPts(),pct=mx?Math.round(st.pts/mx*100):0,band=scoreBand(pct);
  $("fscore").textContent=st.pts;$("badge").innerHTML='<span class="e">'+b[1]+'</span><span>'+b[2]+'</span>';
  var c=0;for(var i=0;i<N;i++)if(S(i+1).c)c++;
  var noteN=0;try{var all=JSON.parse(localStorage.getItem("sunderland-course-notes")||"{}");for(var k in all)if(k.indexOf(KEY+":")==0)noteN++}catch(e){}
  var notesLine=noteN?'<br>📝 你喺今日更新咗 '+noteN+' 條 ⚠️ 更正（只喺呢部機）':'';
  var rev='<br><span style="color:var(--muted)">之後想溫可以隨時返嚟再玩；開工後都得。</span>';
- $("fsum").innerHTML="你攞到 <b>"+st.pts+"</b>／滿分 <b>"+mx+"</b>（"+pct+"%）<br>"+cheer(pct,!!st.quizRetry)+"<br>完成 "+c+"/"+N+" 關 · 用咗 "+fmt(TOTAL-st.time)+"<br>"+D.bye+notesLine+rev;
- if(!st.done){st.done=true;st.doneDate=todayISO()}st.marked=false;st.score=st.pts;st.max=mx;save();confetti(120);
+ var how='<br><span style="color:var(--muted);font-size:13px">滿分＝今日每關都做好一次嘅最高分；徽章係趣味目標，睇合唔合理用上面 %。</span>';
+ $("fsum").innerHTML="你攞到 <b>"+st.pts+"</b>／滿分 <b>"+mx+"</b>（"+pct+"%）· <b>"+band.tag+"</b><br>"+cheer(pct,!!st.quizRetry)+"<br>完成 "+c+"/"+N+" 關 · 用咗 "+fmt(TOTAL-st.time)+how+"<br>"+D.bye+notesLine+rev;
+ if(!st.done){st.done=true;st.doneDate=todayISO()}st.marked=false;st.score=st.pts;st.max=mx;st.pct=pct;save();confetti(120);
 }
 $("tbtn").onclick=function(){st.run=!st.run;tick();save()};
 $("next").onclick=nextStep;$("back").onclick=function(){go(st.step-1)};
@@ -358,12 +362,41 @@ function ld(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return nu
 function streak(){var set={};C.forEach(function(d){var s=ld(d.key);if(s&&s.done&&s.doneDate)set[s.doneDate]=1});
  var d=new Date(),n=0;if(!set[todayISO()])d.setDate(d.getDate()-1);
  while(true){var k=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");if(!set[k])break;n++;d.setDate(d.getDate()-1)}return n}
+function dayMaxPts(d){
+ if(!d||!d.steps)return 0;
+ var m=0;
+ d.steps.forEach(function(x){
+  if(x.type=="cards")m+=5*x.items.length;
+  else if(x.type=="sort"||x.type=="order")m+=10*x.items.length;
+  else if(x.type=="quiz"){m+=20*x.items.length;for(var i=2;i<x.items.length;i++)m+=5}
+  else if(x.type=="guess")m+=25*x.items.length;
+  else if(x.type=="branch"){var node=x.start,seen={};while(x.nodes[node]&&!x.nodes[node].end&&!seen[node]){seen[node]=1;var opts=x.nodes[node].opts,ok=null;for(var j=0;j<opts.length;j++)if(opts[j].ok){ok=opts[j];break}if(!ok)break;m+=ok.pts||15;node=ok.go}m+=20}
+  else if(x.type=="practice")m+=20+4*(x.checks?x.checks.length:0);
+ });
+ return m;
+}
+function scoreBand(pct){
+ if(pct>=80)return {tag:"穩陣",hint:"合理，可以放心用"};
+ if(pct>=50)return {tag:"建議再溫",hint:"唔穩陣，返去弱關再練"};
+ return {tag:"要重溫",hint:"未夠，一定要再玩呢日"};
+}
 function home(){
  clearInterval(TIMER);document.body.classList.add("home");document.getElementById("htitle").textContent="Sunderland HK 自學課程";
- var t=todayISO(),done=0,pts=0,avail=0;
- var rows=C.map(function(d){var s=ld(d.key);if(!d.soon)avail++;if(s&&s.done){done++;pts+=(s.score||0)}
+ var t=todayISO(),done=0,pts=0,avail=0,maxSum=0;
+ var rows=C.map(function(d){var s=ld(d.key);if(!d.soon)avail++;
+  var mx=s&&s.max?s.max:dayMaxPts(d);
+  if(s&&s.done){done++;pts+=(s.score||0);if(s.score!=null)maxSum+=mx}
+  var st;
+  if(d.soon)st="🔒 Coming soon";
+  else if(s&&s.done){
+   if(s.marked&&(s.score==null||s.score===undefined))st="✅ 已標記完成（未計分）";
+   else if(s.score!=null){
+    var pct=mx?Math.round(s.score/mx*100):0,band=scoreBand(pct);
+    st="✅ "+s.score+"／滿分 "+mx+"（"+pct+"%）· <b>"+band.tag+"</b><br><span style=\"color:var(--muted)\">"+band.hint+"</span>";
+   }else st="✅ 完成";
+  }else if(s&&s.step>0)st="⏳ 做緊";
+  else st="未開始";
   var cls="box day"+(s&&s.done?" ok":"")+(d.soon?" soon":"")+(d.iso==t?" today":"");
-  var st=d.soon?"🔒 Coming soon":s&&s.done?(s.marked?"✅ 已標記完成":"✅ 完成 · "+s.score+" 分"):s&&s.step>0?"⏳ 做緊":"未開始";
   var btn=(!d.soon&&!(s&&s.done))?'<button class="mark" data-k="'+d.key+'">✔ 我做咗喇</button>':'';
   var inner=(d.iso==t?'<span class="today-tag">今日</span>':'')+'<div class="dn">D'+d.n+'</div><div class="dt"><b>'+d.title+'</b><br><small>'+d.date+(d.minutes?' · '+d.minutes+' 分鐘':'')+'</small><div class="st">'+st+'</div></div>'+btn;
   return d.soon?'<div class="'+cls+'">'+inner+'</div>':'<a class="'+cls+'" href="#day'+d.n+'" id="card'+d.n+'">'+inner+'</a>'});
@@ -371,7 +404,9 @@ function home(){
  var notes={};try{notes=JSON.parse(localStorage.getItem("sunderland-course-notes")||"{}")}catch(e){}
  var nkeys=Object.keys(notes);
  var notesBlock=nkeys.length?'<div class="box"><b>我嘅更正 📝</b><p class="sub" style="margin:6px 0">'+nkeys.length+' 條已儲喺呢部機。有 ⚠️ 嘅知識卡可以再撳「更新」。</p>'+nkeys.slice(0,8).map(function(k){var v=notes[k].replace(/</g,"&lt;").replace(/\n/g,"<br>");return '<div style="font-size:13px;margin:8px 0;padding:8px;background:var(--card);border-radius:10px"><div class="tag" style="color:var(--ok)">你已更新</div>'+v+'</div>'}).join("")+(nkeys.length>8?'<p class="sub">…仲有 '+(nkeys.length-8)+' 條</p>':'')+'</div>':'';
- document.getElementById("home").innerHTML='<section class="on"><h2>自學課程 📚</h2><p class="sub">每日大約 15 分鐘，一日一課。<br>開工後都可以返嚟溫；答錯嘅會再問到你記住，⚠️ 確認咗仲可以自己改。</p>'+notesBlock+'<div class="kpis"><div class="kpi"><b>'+done+'/'+C.length+'</b><small>總進度 '+pct+'%</small></div><div class="kpi"><b>'+pts+'</b><small>總分</small></div><div class="kpi"><b>🔥 '+sk+'</b><small>連續日數</small></div></div>'+rows.join("")+'</section>';
+ var legend='<div class="box"><b>分數點睇？</b><ul class="tight" style="margin:8px 0 0;padding-left:1.2em;font-size:13px;color:var(--muted)"><li>每日分數＝做齊關卡攞到嘅分；<b>滿分</b>＝每關都做好一次嘅最高分</li><li><b>≥80%</b> 穩陣（合理，可以放心用）· <b>50–79%</b> 建議再溫 · <b>＜50%</b> 要重溫</li><li><b>總分</b>＝各日分數加埋，睇整體勤力度，唔係「過關線」</li></ul></div>';
+ var totLabel=maxSum?pts+"／"+maxSum:String(pts);
+ document.getElementById("home").innerHTML='<section class="on"><h2>自學課程 📚</h2><p class="sub">每日大約 15 分鐘，一日一課。<br>開工後都可以返嚟溫；答錯嘅會再問到你記住，⚠️ 確認咗仲可以自己改。</p>'+notesBlock+legend+'<div class="kpis"><div class="kpi"><b>'+done+'/'+C.length+'</b><small>總進度 '+pct+'%</small></div><div class="kpi"><b>'+totLabel+'</b><small>總分／各日滿分加埋</small></div><div class="kpi"><b>🔥 '+sk+'</b><small>連續日數</small></div></div>'+rows.join("")+'</section>';
  document.querySelectorAll(".mark").forEach(function(b){b.onclick=function(e){e.preventDefault();e.stopPropagation();var s=ld(b.dataset.k)||{};s.done=true;s.marked=true;s.doneDate=todayISO();s.step=s.step||0;localStorage.setItem(b.dataset.k,JSON.stringify(s));home()}});
  window.scrollTo(0,0);
  var td=document.querySelector(".day.today");if(td&&td.getBoundingClientRect().top>window.innerHeight-80)td.scrollIntoView({block:"center"});

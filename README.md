@@ -3,3 +3,5 @@
 Stephanie's private Sunderland HK admissions self-study course (Days 1–12 interactive). Progress is stored in the browser (localStorage). ⚠️ notes are editable locally after onboard.
 
 Open it on your phone via GitHub Pages: https://auzistephanie.github.io/sunderland-training/
+
+Scores on home and finish show 滿分 plus bands: 穩陣 ≥80%, 建議再溫 50–79%, 要重溫 ＜50%.
