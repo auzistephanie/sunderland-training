@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sunderland HK 自學課程</title><style>
+:root{--bg:#fff7ef;--card:#fff;--ink:#3a2a20;--muted:#8a6f5e;--pri:#e8672c;--pri2:#f4a03a;--ok:#2f9e6a;--bad:#d6453d;--warn:#fff1c9;--line:#f1dccb;--r:18px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,"PingFang HK","Noto Sans TC","Microsoft JhengHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+header{position:sticky;top:0;z-index:10;background:linear-gradient(135deg,var(--pri),var(--pri2));color:#fff;padding:10px 16px 12px;box-shadow:0 2px 10px #e8672c44}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:14px}
+.top b{font-size:16px}
+.pill{background:#ffffff33;border-radius:99px;padding:3px 10px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pill button{background:none;border:0;color:#fff;font-size:14px;cursor:pointer;padding:0 0 0 4px}
+.bar{height:8px;background:#ffffff44;border-radius:99px;margin-top:8px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:#fff;border-radius:99px;transition:width .4s}
+main{max-width:560px;margin:0 auto;padding:16px 16px 90px}
+section{display:none;animation:in .35s}
+section.on{display:block}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1}}
+h2{margin:6px 0 4px;font-size:22px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 14px}
+.box{background:var(--card);border-radius:var(--r);padding:16px;box-shadow:0 4px 16px #c9824a1f;margin-bottom:14px}
+.btn{display:inline-block;border:0;border-radius:14px;padding:12px 18px;font-size:16px;font-weight:600;cursor:pointer;background:var(--pri);color:#fff;font-family:inherit}
+.btn.ghost{background:#fff;color:var(--pri);border:2px solid var(--pri)}
+.btn.full{width:100%}
+.btn:disabled{opacity:.4}
+.row{display:flex;gap:10px}
+.row .btn{flex:1}
+.nav{position:fixed;left:0;right:0;bottom:0;background:#fffaf5ee;backdrop-filter:blur(6px);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
+.nav .row{max-width:560px;margin:0 auto}
+.steps{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 0}
+.steps span{font-size:12px;padding:3px 9px;border-radius:99px;background:#fff;border:1px solid var(--line);color:var(--muted)}
+.steps span.done{background:var(--ok);color:#fff;border-color:var(--ok)}
+.steps span.cur{border-color:var(--pri);color:var(--pri);font-weight:700}
+a{color:var(--pri)}
+.src{font-size:12px;margin-top:8px}
+.src a{margin-right:6px}
+.warn{background:var(--warn);border-left:4px solid #e0a800;border-radius:10px;padding:8px 10px;font-size:14px;margin-top:8px}
+/* flip cards */
+.deck{perspective:1000px;height:300px;position:relative;touch-action:pan-y}
+.fc{position:absolute;inset:0;transition:transform .55s;transform-style:preserve-3d;cursor:pointer}
+.fc.flip{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:22px;padding:22px;display:flex;flex-direction:column;justify-content:center;box-shadow:0 8px 24px #c9824a33}
+.front{background:linear-gradient(150deg,#ffb36b,#e8672c);color:#fff}
+.front .q{font-size:22px;font-weight:700}
+.front .hint{margin-top:auto;font-size:13px;opacity:.85}
+.back{background:#fff;transform:rotateY(180deg);overflow:auto}
+.back .a{font-size:17px}
+.tag{font-size:12px;opacity:.85;margin-bottom:8px}
+.dots{display:flex;justify-content:center;gap:5px;margin:12px 0}
+.dots i{width:7px;height:7px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--pri);width:18px;border-radius:9px}
+/* match */
+.pool{display:flex;flex-wrap:wrap;gap:8px;min-height:44px}
+.chip{background:#fff;border:2px solid var(--line);border-radius:12px;padding:8px 10px;font-size:14px;cursor:grab;user-select:none;touch-action:none}
+.chip.sel{border-color:var(--pri);background:#ffe9db;transform:scale(1.04)}
+.chip.ok{border-color:var(--ok);background:#e5f6ee;cursor:default}
+.chip.shake{animation:shake .4s;border-color:var(--bad)}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.tiers{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.tier{background:#fff;border:2px dashed var(--pri2);border-radius:16px;padding:10px;min-height:110px}
+.tier h4{margin:0 0 6px;font-size:15px;color:var(--pri)}
+.tier.hover{background:#fff1e6}
+.tier .chip{font-size:12px;padding:5px 7px;margin:3px 0;display:block}
+/* quiz */
+.opt{display:block;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:14px;padding:12px 14px;margin:8px 0;font-size:15px;cursor:pointer;font-family:inherit;color:var(--ink)}
+.opt.right{border-color:var(--ok);background:#e5f6ee}
+.opt.wrong{border-color:var(--bad);background:#fde8e6}
+.fb{display:none;margin-top:10px;padding:12px;border-radius:12px;font-size:14px}
+.fb.show{display:block}
+.fb.good{background:#e5f6ee}.fb.nope{background:#fde8e6}
+.stat{display:flex;gap:8px;margin-bottom:10px;font-size:14px}
+.stat>span{background:#fff;border-radius:99px;padding:4px 10px;border:1px solid var(--line)}
+.bubble{background:#eef3ff;border-radius:16px 16px 16px 4px;padding:12px 14px;margin:6px 0 12px;font-size:16px}
+/* intro */
+.ring{font-size:56px;font-weight:800;text-align:center;color:var(--pri);font-variant-numeric:tabular-nums}
+.model{filter:blur(6px);transition:filter .3s;user-select:none}
+.model.show{filter:none;user-select:auto}
+.check label{display:block;padding:6px 0;font-size:15px}
+/* final */
+.badge{width:150px;height:150px;margin:10px auto;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 30% 30%,#ffe08a,#f4a03a 60%,#e8672c);color:#fff;font-weight:800;box-shadow:0 0 0 8px #fff,0 0 0 12px #f4a03a66;animation:pop .7s}
+.badge .e{font-size:48px}
+@keyframes pop{0%{transform:scale(.2) rotate(-30deg)}70%{transform:scale(1.1)}100%{transform:scale(1)}}
+.big{font-size:40px;font-weight:800;text-align:center;color:var(--pri)}
+.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}
+.confetti i{position:absolute;top:-20px;width:9px;height:14px;border-radius:2px;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+.toast{position:fixed;left:50%;top:90px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:8px 16px;border-radius:99px;font-size:14px;z-index:60;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.on{opacity:1}
+ul.tight{padding-left:20px;margin:6px 0}
+.guessv{font-size:34px;font-weight:800;text-align:center;color:var(--pri);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--pri);height:30px}
+.ord{display:flex;flex-direction:column;gap:8px}
+.ord .chip{display:flex;gap:8px;align-items:flex-start;cursor:pointer}
+.ord .num{background:var(--pri);color:#fff;border-radius:50%;min-width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;font-size:13px}
+.say{background:#f3f7ff;border-radius:14px;padding:10px 12px;margin:8px 0;font-size:15px}
+.me{background:#ffe9db;border-radius:16px 16px 4px 16px;padding:10px 12px;margin:8px 0 8px 30px;font-size:15px}
+.log{max-height:none}
+.tiers.c3{grid-template-columns:1fr 1fr 1fr}
+.tiers.c1{grid-template-columns:1fr}
+.expl{font-size:13px;color:var(--muted);margin:2px 0 6px}
+body.home .dayonly{display:none!important}body:not(.home) .homeonly{display:none!important}
+.day{display:flex;gap:12px;align-items:center;text-decoration:none;color:var(--ink);position:relative}
+.dn{min-width:52px;height:52px;border-radius:16px;background:linear-gradient(150deg,#ffb36b,#e8672c);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:17px}
+.day.ok .dn{background:var(--ok)}.day.soon{opacity:.55}.day.soon .dn{background:#cdb8a8}
+.day.today{outline:3px solid var(--pri);box-shadow:0 6px 20px #e8672c44}
+.today-tag{position:absolute;top:-9px;right:12px;background:var(--pri);color:#fff;font-size:11px;font-weight:700;border-radius:99px;padding:2px 8px}
+.dt{flex:1;min-width:0}.dt small{color:var(--muted)}.st{font-size:12px;margin-top:3px}
+.mark{font-size:12px;padding:4px 8px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--muted);cursor:pointer;font-family:inherit;white-space:nowrap}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.kpi{background:#fff;border-radius:16px;padding:10px;text-align:center;box-shadow:0 4px 16px #c9824a1f}.kpi b{display:block;font-size:22px;color:var(--pri)}.kpi small{color:var(--muted);font-size:12px}
+</style></head><body>
+<header><div class="top"><b id="htitle">Sunderland HK 自學課程</b><span class="pill dayonly">⏱ <span id="clock"></span><button id="tbtn" aria-label="暫停/開始">⏸</button></span><span class="pill dayonly">⭐ <span id="pts">0</span></span><span class="pill homeonly">🔥 <span id="hstreak">0</span> 日</span></div><div class="bar"><i id="prog"></i></div></header>
+<main id="home" class="homeonly"></main>
+<main id="main" class="dayonly"></main>
+<div class="nav dayonly"><div class="row"><button class="btn ghost" id="back">← 返轉頭</button><button class="btn" id="next">下一步 →</button></div></div>
+<div class="toast" id="toast"></div><div class="confetti" id="confetti"></div>
+<script>window.SRC={"S1": "https://www.sunderland.edu.hk/", "S2": "https://www.sunderland.edu.hk/full_time_bachelor_degrees/", "S3": "https://www.sunderland.edu.hk/product/ba-hons-business-management/", "S4": "https://www.sunderland.edu.hk/product/ba-business-human-resource-management/", "S5": "https://www.sunderland.edu.hk/product/bachelor-of-arts-hons-business-and-marketing-management-top-up/", "S6": "https://www.sunderland.edu.hk/product/mba/", "S7": "https://www.sunderland.edu.hk/product/mba-project-only/", "S8": "https://www.sunderland.edu.hk/product/msc-data-science/", "S9": "https://www.sunderland.edu.hk/product/msc-psychology-conversion/", "S10": "https://www.sunderland.edu.hk/product/msc-international-business-management-online/", "S11": "https://www.sunderland.edu.hk/product/pearson-btec-higher-national-diploma-in-business-rqf-full-time/", "S12": "https://www.sunderland.edu.hk/product/btec-level-5-hnd-diploma-business-rqf/", "S13": "https://www.sunderland.edu.hk/product/pearson-btec-higher-national-diploma-in-business-rqf-online/", "S14": "https://www.sunderland.edu.hk/courses-grid/", "S15": "https://www.sunderland.edu.hk/wp-content/uploads/2025/12/USHK-PT-PG-LL251216-B.pdf", "S16": "https://www.edb.gov.hk/en/edu-system/postsecondary/non-local-higher-professional-edu/course/registered-course.html", "S17": "https://applications.edb.gov.hk/ncr/ncr_detail.aspx?langno=1&regno=252467", "S18": "https://applications.edb.gov.hk/ncr/ncr_detail.aspx?langno=1&regno=252947", "S19": "https://www.wfsfaa.gov.hk/en/sfo/postsecondary/enls/eligibility.php", "S20": "https://www.csb.gov.hk/english/recruit/qual/333.html", "S21": "https://www.sunderland.ac.uk/about", "S23": "https://www.sunderland.ac.uk/news/2023/sunderland-celebrates-with-silver", "S29": "https://nittp.vtc.edu.hk/en"};window.COURSE=[{"short": "Day 1", "title": "學校背景 + 課程地圖 🏫", "goal": "30 秒講得出 Sunderland HK 係乜嘢學校、喺邊、主力賣乜課程。", "minutes": 15, "sources": ["S1", "S2", "S14", "S16", "S17", "S18", "S21", "S23"], "badges": [[330, "🏆", "課程地圖達人"], [210, "🥈", "校園小百科"], [0, "🌱", "起步新星"]], "bye": "聽日 Day 2 學學費 👋", "steps": [{"type": "cards", "icon": "📇", "name": "知識卡", "sub": "撳張卡睇答案，左右掃或者撳下面掣轉下一張。", "items": [{"t": "學校背景", "q": "英國 University of Sunderland 幾時創立？", "a": "1901 年。官網話全球有超過 27,500 名學生、197,000 名校友，其中香港約 10,000 名。", "s": ["S1"]}, {"t": "學校背景", "q": "香港分校幾時、喺邊度宣佈成立？", "a": "2017 年 3 月 2 日，喺英國駐港總領事館宣佈。係大學喺英國以外第一間分校。", "s": ["S1", "S2"]}, {"t": "學校背景", "q": "英國總部嘅三個主校園係？", "a": "Sunderland、London、Hong Kong。", "s": ["S21"]}, {"t": "學校背景", "q": "地址同聯絡？", "a": "灣仔告士打道 181–185 號中怡大廈 1 樓<br>📞 +852 2992 0133<br>✉️ enquire@sunderland.edu.hk", "s": ["S1"]}, {"t": "學校背景", "q": "教育局紀錄寫營辦者係邊個？", "a": "The University of Sunderland in Hong Kong Limited；大學屬 Publicly funded、Self-accredited。", "s": ["S17"]}, {"t": "學校背景", "q": "英國 TEF 2023 攞咗咩級？", "a": "銀級（Silver）。", "s": ["S23"]}, {"t": "⚠️ 小心", "q": "衛報排名可唔可以主動講？", "a": "⚠️ 學士頁寫英國首 27 名，主頁寫 top 30，口徑唔一致，未確認前唔好主動講。", "s": []}, {"t": "課程地圖", "q": "HND 讀幾耐？有咩模式？邊個頒授？", "a": "Pearson BTEC Level 5 HND in Business，21 個月；日間、夜間及週末、100% 網上三種。頒授機構係 <b>Pearson</b>，唔係 Sunderland。", "s": ["S11", "S18"]}, {"t": "課程地圖", "q": "Top-up 學士有咩主修？點上堂？", "a": "3 個：Business and Management、Business and HRM、Business and Marketing Management。12 個月夜間面授。", "s": ["S3", "S4", "S5"]}, {"t": "課程地圖", "q": "3 年全日制學士有咩特別？", "a": "同樣 3 個主修，可以揀去英國校園讀一段時間。", "s": ["S2"]}, {"t": "課程地圖", "q": "碩士層有乜？", "a": "MBA（15 個月）、MBA (Project Only)、MSc Data Science（21 個月）；網上有 MSc Psychology (Conversion)、MSc International Business Management。", "s": ["S6", "S7", "S8", "S9", "S10"]}, {"t": "課程地圖", "q": "短期／其他課程有咩例子？", "a": "Executive Certificate: Introduction to Data Science & AI（18 小時，同 Smart City Academy 合辦）、ESG x SDP 碳排放課程等。", "s": ["S14"]}]}, {"type": "sort", "icon": "🗺️", "name": "課程地圖", "sub": "拖個課程落啱嗰層；或者先撳課程，再撳層。", "tiers": [["hnd", "銜接層 HND"], ["ba", "學士"], ["ms", "碩士"], ["sc", "短期／其他"]], "doneMsg": "🎉 全部啱晒！4 層記住就夠。", "note": "<div class=\"warn\">⚠️ Foundation：官網未查到。<br>⚠️ DBA、Accounting & Financial Management top-up、Tourism & Hospitality、HNC Business、Sport HNC／HND：教育局有註冊，但官網冇課程頁，未知仲有冇開。<div class=\"src\"><a href=\"https://www.edb.gov.hk/en/edu-system/postsecondary/non-local-higher-professional-edu/course/registered-course.html\" target=\"_blank\" rel=\"noopener\">S16</a></div></div><div class=\"box\" style=\"margin-top:10px;font-size:14px\">注意：EDB 名單上有 Sunderland 工程、設計課程係由 Hong Kong College of Technology International 營辦，<b>唔係 Sunderland HK 自己嘅課程</b>。<div class=\"src\"><a href=\"https://www.edb.gov.hk/en/edu-system/postsecondary/non-local-higher-professional-edu/course/registered-course.html\" target=\"_blank\" rel=\"noopener\">S16</a></div></div>", "items": [["Pearson BTEC Level 5 HND in Business", "hnd"], ["BA Business and Management（Top-up）", "ba"], ["BA Business and HRM（Top-up）", "ba"], ["BA Business and Marketing Management（Top-up）", "ba"], ["3 年全日制學士", "ba"], ["MBA", "ms"], ["MBA (Project Only)", "ms"], ["MSc Data Science", "ms"], ["MSc Psychology (Conversion)", "ms"], ["MSc International Business Management", "ms"], ["Executive Certificate: Intro to Data Science & AI", "sc"], ["ESG x SDP 碳排放課程", "sc"]]}, {"type": "quiz", "icon": "❓", "name": "小測", "items": [{"q": "香港分校幾時宣佈成立？", "o": ["2015 年 9 月 1 日", "2017 年 3 月 2 日", "2017 年 9 月 1 日", "2019 年 3 月 2 日"], "a": 1, "e": "2017 年 3 月 2 日喺英國駐港總領事館宣佈，係大學喺英國以外第一間分校。", "s": ["S1", "S2"]}, {"q": "HND 嘅頒授機構係邊個？", "o": ["University of Sunderland", "Hong Kong College of Technology International", "Pearson Education Limited", "教育局"], "a": 2, "e": "係 Pearson Education Limited，唔係 Sunderland。", "s": ["S11", "S18"]}, {"q": "Top-up 學士有邊 3 個主修？", "o": ["Business and Management、Business and HRM、Business and Marketing Management", "MBA、MSc Data Science、MSc Psychology", "Accounting、Tourism、Sport", "Business、Engineering、Design"], "a": 0, "e": "3 個都係 Business 底：Management、HRM、Marketing Management，12 個月夜間面授。", "s": ["S3", "S4", "S5"]}, {"q": "Sunderland HK 喺邊？", "o": ["尖沙咀廣東道", "灣仔告士打道 181–185 號中怡大廈 1 樓", "中環皇后大道中", "觀塘鴻圖道"], "a": 1, "e": "灣仔告士打道 181–185 號中怡大廈 1 樓。", "s": ["S1"]}, {"q": "TEF 2023 攞咗咩級？", "o": ["Gold", "Silver", "Bronze", "冇參加"], "a": 1, "e": "銀級（Silver）。", "s": ["S23"]}, {"q": "MSc Data Science 讀幾耐？", "o": ["12 個月", "15 個月", "18 個月", "21 個月"], "a": 3, "e": "21 個月。MBA 先係 15 個月。", "s": ["S8", "S6"]}, {"q": "EDB 名單上嘅 Sunderland 工程、設計課程係咪你哋自己嘅？", "o": ["係，全部都係", "唔係，由 Hong Kong College of Technology International 營辦", "係，但只限網上", "要睇年份"], "a": 1, "e": "唔係 Sunderland HK 自己嘅課程，係 HKCT International 營辦。", "s": ["S16"]}, {"q": "學生問衛報排名，你應該？", "o": ["話英國首 27 名", "話 top 30", "⚠️ 口徑唔一致，未確認前唔好主動講", "話冇排名"], "a": 2, "e": "⚠️ 學士頁寫首 27 名，主頁寫 top 30，未確認前唔好主動講。", "s": []}]}, {"type": "branch", "icon": "💬", "name": "角色扮演", "sub": "有個學生 WhatsApp 你，揀最好嘅回覆。", "start": "a", "nodes": {"a": {"who": "🧑‍🎓 學生", "text": "「你哋有冇 Foundation 㗎？」", "opts": [{"t": "「有呀，報 HND 就得啦！」", "ok": false, "fb": "HND 唔係 Foundation，咁講會誤導人。"}, {"t": "「官網暫時見唔到 Foundation，我同 team 確認再覆你。」", "ok": true, "pts": 30, "go": "b", "fb": "啱晒！⚠️ 官網未查到 Foundation，老實講、再跟進最穩陣。"}, {"t": "「冇，我哋從來都冇。」", "ok": false, "fb": "太絕對喇，你未確認過，唔好咁快落定論。"}, {"t": "「教育局有註冊，應該有嘅。」", "ok": false, "fb": "資料入面冇講 Foundation 喺教育局有註冊，唔好估。"}]}, "b": {"who": "🧑‍🎓 學生", "text": "「好，唔該你。」", "end": "🎉 最好答法：「官網暫時見唔到 Foundation，我同 team 確認再覆你。」（⚠️）"}}}, {"type": "practice", "icon": "🎤", "name": "30 秒自我介紹", "sec": 30, "prompt": "對住鏡／錄音，講一次。", "checks": ["英國 University of Sunderland 喺香港嘅分校", "2017 年開", "灣仔告士打道中怡大廈", "HND、12 個月夜間 top-up、3 年全日制學士", "MBA、MSc Data Science 呢類碩士"], "model": "「Sunderland HK 係英國 University of Sunderland 喺香港嘅分校，2017 年開，喺灣仔告士打道中怡大廈。我哋主要有 HND、12 個月夜間 top-up 學士、3 年全日制學士，仲有 MBA 同 MSc Data Science 呢類碩士課程。」"}], "n": 1, "iso": "2026-10-13", "date": "10/13（二）", "key": "sunderland-course-day1", "nextDay": "#day2"}, {"short": "Day 2", "date": "10/14（三）", "title": "學費 cheat sheet 💰", "goal": "主力課程嘅學費、分幾期，唔使睇稿都講得出。", "minutes": 15, "sources": ["S2", "S3", "S6", "S7", "S8", "S9", "S10", "S11", "S12", "S13", "S15"], "badges": [[400, "🏆", "報價快槍手"], [260, "🥈", "學費小算盤"], [0, "🌱", "學費新手"]], "bye": "聽日 Day 3 學入學要求 👋", "introNote": "全部係 2026/27 學費，<b>另加 HK$600 行政費</b>；2027/28 學費會再檢討。", "steps": [{"type": "cards", "icon": "📇", "name": "學費卡", "sub": "撳張卡睇答案，記住數字同分幾期。", "items": [{"t": "基本", "q": "所有學費係邊個學年？另加咩？", "a": "全部係 <b>2026/27</b> 學費，另加 <b>HK$600 行政費</b>；2027/28 學費會再檢討。", "s": ["S3"]}, {"t": "學士", "q": "Top-up 學士（3 個主修）幾錢？", "a": "HK$83,000／12 個月，分 4 期。", "s": ["S3", "S4", "S5"]}, {"t": "學士", "q": "3 年全日制學士幾錢？", "a": "HK$83,000／年。", "s": ["S2"]}, {"t": "HND", "q": "HND（日間）？", "a": "HK$116,000 + BTEC 註冊費 HK$5,350，分 7 期。", "s": ["S11"]}, {"t": "HND", "q": "HND（夜間及週末）？", "a": "HK$91,000，分 7 期。", "s": ["S12"]}, {"t": "HND", "q": "HND（100% 網上）？", "a": "HK$80,000 + HK$5,350，分 2 期。", "s": ["S13"]}, {"t": "碩士", "q": "MBA？", "a": "HK$156,000／15 個月，分 5 期。", "s": ["S6"]}, {"t": "碩士", "q": "MBA (Project Only)？", "a": "HK$69,000／最少 9 個月，分 3 期。", "s": ["S7"]}, {"t": "碩士", "q": "MSc Data Science？", "a": "3 段各 HK$45,000（PGCert 6 個月、PGDip 6 個月、MSc 9 個月），合共 HK$135,000，分 6 期。", "s": ["S8"]}, {"t": "⚠️ 小心", "q": "MSc Psychology (Conversion) 幾錢？", "a": "⚠️ 官網：9 月期 HK$60,000（原價 HK$120,000）；2025-12 單張：HK$120,000，資料矛盾，要確認先答。", "s": ["S9", "S15"]}, {"t": "⚠️ 小心", "q": "MSc International Business Management？", "a": "⚠️ HK$133,000（頁面標 2025/26 學費），1 期。", "s": ["S10"]}, {"t": "⚠️ 小心", "q": "Online MBA、普通話課程、短期課程？", "a": "⚠️ 未查到。", "s": ["S14"]}, {"t": "記憶竅門", "q": "「83」「156 ÷ 15」「45 × 3」係咩？", "a": "83：所有學士都係 HK$83,000。<br>156 ÷ 15：MBA 156K、15 個月。<br>45 × 3：Data Science 三段各 45K。<br>HND 三個價：日間 116K、夜間 91K、網上 80K；日間同網上要加 HK$5,350。", "s": []}]}, {"type": "guess", "icon": "🎯", "name": "估價遊戲", "sub": "拉條 bar 估學費（唔計 HK$600 行政費同註冊費）。準確度越高分越多。", "prefix": "HK$", "items": [{"q": "Top-up 學士（12 個月）", "min": 50000, "max": 160000, "step": 1000, "ans": 83000, "e": "記住「83」，分 4 期。", "s": ["S3"]}, {"q": "MBA（15 個月）", "min": 80000, "max": 220000, "step": 1000, "ans": 156000, "e": "「156 ÷ 15」，分 5 期。", "s": ["S6"]}, {"q": "MBA (Project Only)", "min": 30000, "max": 150000, "step": 1000, "ans": 69000, "e": "最少 9 個月，分 3 期。", "s": ["S7"]}, {"q": "MSc Data Science 總數", "min": 60000, "max": 200000, "step": 1000, "ans": 135000, "e": "「45 × 3」= HK$135,000，分 6 期。", "s": ["S8"]}, {"q": "HND（夜間及週末）", "min": 50000, "max": 150000, "step": 1000, "ans": 91000, "e": "分 7 期，唔使加 BTEC 註冊費。", "s": ["S12"]}, {"q": "HND（日間）學費", "min": 60000, "max": 180000, "step": 1000, "ans": 116000, "e": "另加 BTEC 註冊費 HK$5,350，分 7 期。", "s": ["S11"]}]}, {"type": "quiz", "icon": "❓", "name": "快問快答", "items": [{"q": "Top-up 學費？", "o": ["HK$83,000，12 個月，4 期，另加 HK$600", "HK$83,000，12 個月，7 期", "HK$91,000，12 個月，4 期", "HK$83,000，唔使行政費"], "a": 0, "e": "HK$83,000，12 個月，4 期，另加 HK$600。", "s": ["S3"]}, {"q": "HND 日間要加咩？", "o": ["淨係 HK$600 行政費", "BTEC 註冊費 HK$5,350 + 行政費 HK$600", "乜都唔使加", "HK$5,350 考試費"], "a": 1, "e": "BTEC 註冊費 HK$5,350 + 行政費 HK$600。", "s": ["S11"]}, {"q": "邊個 HND 模式唔使加 BTEC 註冊費？", "o": ["日間", "100% 網上", "夜間及週末", "全部都要加"], "a": 2, "e": "表入面淨係日間同網上寫明要加 HK$5,350；夜間係 HK$91,000。", "s": ["S12"]}, {"q": "MBA 分幾期？", "o": ["3 期", "4 期", "5 期", "7 期"], "a": 2, "e": "HK$156,000，15 個月，5 期。", "s": ["S6"]}, {"q": "MSc Data Science 分幾期？", "o": ["2 期", "3 期", "5 期", "6 期"], "a": 3, "e": "合共 HK$135,000，分 6 期。", "s": ["S8"]}, {"q": "學生問 MSc Psychology 幾錢，你點答？", "o": ["HK$60,000", "HK$120,000", "⚠️ 資料矛盾，要確認先答", "同 MBA 一樣"], "a": 2, "e": "⚠️ 官網寫 9 月期 HK$60,000（原價 HK$120,000），2025-12 單張寫 HK$120,000，要確認先答。", "s": ["S9", "S15"]}, {"q": "學生話「平啲得唔得？」你應該？", "o": ["自己畀個九折", "講明係 2026/27 學費、另加 HK$600，唔好自己作折扣", "話下年會平啲", "叫佢等優惠"], "a": 1, "e": "報價習慣：一定講埋「另加 HK$600 行政費」同「係 2026/27 學費」，唔好自己作折扣。", "s": []}]}, {"type": "branch", "icon": "💬", "name": "報價角色扮演", "sub": "學生問價，揀最好嘅講法。", "start": "a", "nodes": {"a": {"who": "🧑‍🎓 學生", "text": "「MBA 要幾錢？」", "opts": [{"t": "「15 萬幾啦。」", "ok": false, "fb": "太含糊，冇講學年、分期同行政費。"}, {"t": "「2026/27 學費係 HK$156,000，15 個月讀完，可以分 5 期交，另外有 HK$600 行政費。」", "ok": true, "go": "b", "fb": "數字、學年、分期、行政費全部講齊。", "s": ["S6"]}, {"t": "「今個月報名我幫你計平啲。」", "ok": false, "fb": "唔好自己作折扣。"}]}, "b": {"who": "🧑‍🎓 學生", "text": "「嗯……5 期即係點？」", "opts": [{"t": "「你想知分期點計，定係想知有冇資助？我逐樣同你講。」", "ok": true, "go": "c", "fb": "用 script 嘅追問，帶佢去下一步。"}, {"t": "「每期大約 3 萬，我估㗎咋。」", "ok": false, "fb": "唔好估數，資料淨係講到分 5 期。"}]}, "c": {"who": "🧑‍🎓 學生", "text": "「好呀，你講下。」", "end": "🎉 完整報價 script：「2026/27 學費係 HK$156,000，15 個月讀完，可以分 5 期交，另外有 HK$600 行政費。你想知分期點計，定係想知有冇資助？」", "s": ["S6"]}}}, {"type": "practice", "icon": "🎤", "name": "30 秒報價練習", "sec": 30, "prompt": "揀 3 個課程，一口氣報價（學年＋價錢＋分期＋行政費）。", "checks": ["講咗「2026/27 學費」", "講咗「另加 HK$600 行政費」", "講啱分幾期", "HND 日間／網上有講 HK$5,350", "冇自己作折扣"], "model": "「Top-up 學士 2026/27 學費係 HK$83,000，12 個月，分 4 期；MBA 係 HK$156,000，15 個月，分 5 期；MSc Data Science 三段各 HK$45,000，合共 HK$135,000，分 6 期。全部另加 HK$600 行政費。」", "s": ["S3", "S6", "S8"]}], "n": 2, "iso": "2026-10-14", "key": "sunderland-course-day2", "nextDay": "#day3"}, {"short": "Day 3", "date": "10/15（四）", "title": "入學要求：學士同 HND 🎓", "goal": "聽完學生學歷，1 分鐘內判斷佢應該讀 HND、top-up 定全日制學士。", "minutes": 15, "sources": ["S2", "S3", "S4", "S5", "S11"], "badges": [[255, "🏆", "入學判官"], [165, "🥈", "配對高手"], [0, "🌱", "起步新星"]], "bye": "聽日 Day 4 學研究院同入學月份 👋", "steps": [{"type": "cards", "icon": "📇", "name": "入學要求卡", "items": [{"t": "Top-up", "q": "有咩學歷可以直入 Top-up？", "a": "有 HND in Business／HRM → 可以直入（市場管理要 <b>HND in Business (Marketing)</b>）。", "s": ["S3", "S4", "S5"]}, {"t": "Top-up", "q": "Higher Diploma／副學士（商科相關）？", "a": "個別考慮。", "s": ["S3"]}, {"t": "Top-up", "q": "Top-up 英文要求？", "a": "IELTS 6.0／GCSE C 或同等。", "s": ["S3"]}, {"t": "Top-up", "q": "冇以上學歷點算？", "a": "個別考慮，或者先讀 HND 再銜接。", "s": ["S3"]}, {"t": "Top-up", "q": "幾時可以豁免英文？", "a": "之前學歷用英文教同考、或者母語係英文 → 豁免英文要求。", "s": ["S3"]}, {"t": "全日制", "q": "3 年全日制學士要咩？", "a": "UCAS 對照分數 112 分 + IELTS 6.0 或同等。IB 或其他學歷個別評核。", "s": ["S2"]}, {"t": "全日制", "q": "未能直入學士一年級？", "a": "可讀一年制「英國商業國家高級證書」，再銜接學士二年級。", "s": ["S2"]}, {"t": "HND", "q": "HND in Business 要咩？", "a": "HKDSE 1 科合格或同等（例如毅進）／QCF Level 3；或有 2 年商業相關工作經驗，個別考慮。", "s": ["S11"]}, {"t": "HND", "q": "HND 英文要求？", "a": "IELTS 5.5。", "s": ["S11"]}]}, {"type": "order", "icon": "🪜", "name": "判斷流程排次序", "sub": "按住次序撳：判斷學生應該讀乜，先問邊樣？", "items": [["有 HND？", "→ Top-up。"], ["有副學士／高級文憑（商科）？", "→ Top-up（個別考慮）。⚠️ 由邊個審批、要幾耐，要問 team。"], ["DSE 生，夠 112 分 + IELTS 6.0？", "→ 全日制學士。"], ["唔夠？", "→ HND，或者全日制嘅一年制銜接。"]], "doneMsg": "🎉 記住呢個次序：HND → 副學士 → 112 + IELTS 6.0 → 唔夠就 HND／一年制銜接。"}, {"type": "sort", "icon": "🧩", "name": "個案配對", "sub": "將每個學生拖去最啱嘅出路；或者先撳學生，再撳格。", "cols": 1, "tiers": [["tu", "Top-up 學士"], ["ft", "3 年全日制學士"], ["hnd", "HND"], ["ask", "⚠️ 要問 team"]], "items": [["阿明：副學士（商業），IELTS 6.5", "tu", "Top-up，副學士屬個別考慮；英文已達標。", ["S3"]], ["阿欣：DSE 只有中文合格，做咗 3 年 admin", "hnd", "HND（DSE 1 科合格，或 2 年商業工作經驗都可以個別考慮）；但英文要 IELTS 5.5，要再問佢英文成績。", ["S11"]], ["阿 Ken：有 HND in Business，大學用英文教同考，冇考 IELTS", "tu", "Top-up；之前學歷用英文教同考，可以申請豁免英文要求。", ["S3"]], ["Mandy：DSE 生，UCAS 對照分數達 112，IELTS 6.0", "ft", "3 年全日制學士。", ["S2"]], ["Jason：有 HND in Business，想讀市場管理 top-up", "ask", "市場管理 top-up 寫明要 HND in Business (Marketing)；佢係普通 Business，要問 team 能唔能夠收（⚠️），或者介紹 Business and Management top-up。", ["S5"]]], "doneMsg": "🎉 5 個個案搞掂！"}, {"type": "quiz", "icon": "❓", "name": "小測", "items": [{"q": "HND 英文要求係？", "o": ["IELTS 5.0", "IELTS 5.5", "IELTS 6.0", "唔使英文"], "a": 1, "e": "HND：IELTS 5.5。", "s": ["S11"]}, {"q": "全日制學士要 UCAS 對照幾多分？", "o": ["96", "104", "112", "120"], "a": 2, "e": "UCAS 112 分 + IELTS 6.0 或同等。", "s": ["S2"]}, {"q": "想讀市場管理 top-up，要咩 HND？", "o": ["HND in Business", "HND in Business (Marketing)", "任何 HND", "HND in HRM"], "a": 1, "e": "市場管理要 HND in Business (Marketing)。", "s": ["S5"]}, {"q": "DSE 生分數唔夠直入全日制一年級，可以點？", "o": ["冇得讀", "讀一年制「英國商業國家高級證書」，再銜接學士二年級", "直接讀 Top-up", "讀 MBA"], "a": 1, "e": "可以先讀一年制證書，再銜接學士二年級。", "s": ["S2"]}, {"q": "副學士（商科）讀 Top-up，邊個審批、要幾耐？", "o": ["即日批", "招生同事自己決定", "⚠️ 要問 team", "一定唔收"], "a": 2, "e": "⚠️ 資料未講，由邊個審批、要幾耐要問 team。", "s": []}]}, {"type": "branch", "icon": "💬", "name": "追問角色扮演", "sub": "阿欣嚟問，你要問齊資料先判斷。", "start": "a", "nodes": {"a": {"who": "🧑‍💼 阿欣", "text": "「我 DSE 淨係中文合格，做咗 3 年 admin，我讀唔讀到學位？」", "opts": [{"t": "「你可以先讀 HND，DSE 1 科合格或者 2 年商業工作經驗都可以個別考慮。」", "ok": true, "go": "b", "fb": "啱，HND 係佢嘅入口。", "s": ["S11"]}, {"t": "「直接報 Top-up 啦。」", "ok": false, "fb": "Top-up 要 HND／副學士；佢冇。"}, {"t": "「讀唔到喎，唔好意思。」", "ok": false, "fb": "太快拒絕，HND 有個別考慮。"}]}, "b": {"who": "🧑‍💼 阿欣", "text": "「好呀！咁仲要準備咩？」", "opts": [{"t": "「你有冇 IELTS 或者其他英文成績？HND 要 IELTS 5.5。」", "ok": true, "go": "c", "fb": "英文係佢未講嘅一環，一定要問。", "s": ["S11"]}, {"t": "「冇喇，交表就得。」", "ok": false, "fb": "漏咗英文要求 IELTS 5.5。"}]}, "c": {"who": "🧑‍💼 阿欣", "text": "「我冇考過，不過可以去考。」", "end": "🎉 讀完 HND 仲可以銜接 Top-up 學士。記住：學歷 + 英文兩樣都要問齊。", "s": ["S3", "S11"]}}}], "n": 3, "iso": "2026-10-15", "key": "sunderland-course-day3", "nextDay": "#day4"}, {"short": "Day 4", "date": "10/16（五）", "title": "研究院 + 入學月份 + 申請流程 📅", "goal": "識答「我讀唔讀得 MBA／Data Science」，同講清楚幾時開學、點申請。", "minutes": 15, "sources": ["S2", "S3", "S6", "S7", "S8", "S9", "S15"], "badges": [[290, "🏆", "研究院顧問"], [190, "🥈", "開學日曆通"], [0, "🌱", "起步新星"]], "bye": "聽日 Day 5 學認受性同 NCR 👋", "steps": [{"type": "cards", "icon": "📇", "name": "入學要求卡", "items": [{"t": "MBA", "q": "MBA 入學有邊 3 條路？", "a": "① 任何學科榮譽學士 2:2 或以上 + 最少 6 個月商業相關工作經驗；② 專業資格 + 3 年商業相關經驗；③ 高級文憑 + 5 年專業／管理經驗（要面試，個別考慮）。", "s": ["S6", "S15"]}, {"t": "MBA", "q": "MBA 英文要求？", "a": "HKDSE Level 3／IELTS 6.0。", "s": ["S6"]}, {"t": "MBA (Project Only)", "q": "MBA (Project Only) 要咩？", "a": "已完成 Pearson Level 7 Extended Diploma in Strategic Management and Leadership 或同等。", "s": ["S7"]}, {"t": "MSc Data Science", "q": "MSc Data Science 入學？", "a": "電腦或相關學科（數學、統計、工程）榮譽學士 2:2；或非電腦但相關（有數字元素）學科 2:1；或 5 年相關業界經驗。英文：HKDSE Level 3／IELTS 6.0。", "s": ["S8"]}, {"t": "MSc Psychology", "q": "MSc Psychology (Conversion)？", "a": "榮譽學士 2:2 或同等專業資格；IELTS 6.0，每部分 5.5。⚠️ 學費、修讀期同入學月份資料矛盾。", "s": ["S9"]}, {"t": "入學月份", "q": "Top-up、MBA、MBA (Project Only) 幾時開學？", "a": "一年 4 期：1、4、7、10 月。", "s": ["S3", "S6"]}, {"t": "入學月份", "q": "MSc Data Science 幾時開學？", "a": "一年 2 期：1、7 月。", "s": ["S8"]}, {"t": "入學月份", "q": "你入職後主要跟邊期？", "a": "10 月期截止日（9 月 28／29 號）已過，主要跟 <b>2027 年 1 月入學</b>。⚠️ 1 月期截止日未查到。", "s": []}, {"t": "申請流程", "q": "兼讀研究院幾耐有 offer？", "a": "14 日內出 offer，之後喺註冊限期前確認學位同交學費。", "s": ["S15"]}]}, {"type": "sort", "icon": "🗓️", "name": "開學月份分類", "sub": "每個課程一年開幾期？拖去啱嗰格。", "cols": 1, "tiers": [["q4", "1、4、7、10 月（一年 4 期）"], ["q2", "1、7 月（一年 2 期）"], ["warn", "⚠️ 資料矛盾"]], "items": [["Top-up 學士", "q4", "", ["S3"]], ["MBA", "q4", "", ["S6"]], ["MBA (Project Only)", "q4", "", ["S6"]], ["MSc Data Science", "q2", "", ["S8"]], ["MSc Psychology (Conversion)", "warn", "⚠️ 學費、修讀期同入學月份資料矛盾。", ["S9"]]]}, {"type": "order", "icon": "📝", "name": "全日制學士申請流程", "sub": "按次序撳。", "items": [["網上申請", "", ["S2"]], ["招生組聯絡", "", ["S2"]], ["14 日內發 Conditional／Unconditional Offer", "", ["S2"]], ["放榜後帶 offer 同成績單正本到分校註冊", "", ["S2"]]]}, {"type": "quiz", "icon": "❓", "name": "小測", "items": [{"q": "冇學士、有高級文憑同 6 年經理經驗，讀唔讀得 MBA？", "o": ["讀唔到", "可以申請，屬非標準入學，要面試同個別考慮", "一定收", "要先讀 Top-up"], "a": 1, "e": "高級文憑 + 5 年專業／管理經驗：要面試，個別考慮。", "s": ["S6", "S15"]}, {"q": "數學系 2:2 畢業，想讀 Data Science，夠唔夠？", "o": ["夠，數學屬相關學科，2:2 已達標（仲要英文達標）", "唔夠，要 2:1", "要 5 年經驗", "要先讀 PGCert 以外嘅課程"], "a": 0, "e": "數學屬相關學科，2:2 已達標，英文都要達標。", "s": ["S8"]}, {"q": "會計系 2:2，想讀 Data Science？", "o": ["一定得", "一定唔得", "非電腦學科要 2:1；2:2 就要睇有冇 5 年相關業界經驗，或者交 team 判斷（⚠️）", "要考 IELTS 7.0"], "a": 2, "e": "⚠️ 非電腦但相關學科要 2:1；唔夠就睇 5 年業界經驗或交 team。", "s": ["S8"]}, {"q": "而家 10 月中，學生想盡快讀 MSc Data Science，最快幾時？", "o": ["2026 年 11 月", "2027 年 1 月期（截止日要確認 ⚠️）", "2027 年 4 月", "2027 年 9 月"], "a": 1, "e": "一年得 1、7 月兩期；⚠️ 1 月期截止日未查到。", "s": ["S8"]}, {"q": "交咗申請之後，大約幾耐有 offer？", "o": ["3 日", "7 日", "14 日內", "1 個月"], "a": 2, "e": "14 日內。", "s": ["S2", "S15"]}, {"q": "MSc Psychology 英文要求？", "o": ["IELTS 5.5", "IELTS 6.0，每部分 5.5", "IELTS 6.5", "HKDSE Level 2"], "a": 1, "e": "IELTS 6.0，每部分 5.5。", "s": ["S9"]}]}, {"type": "branch", "icon": "💬", "name": "角色扮演：10 月中嘅查詢", "start": "a", "nodes": {"a": {"who": "👩‍💻 學生", "text": "「我讀電腦 2:2 畢業，想讀 MSc Data Science，下個月開唔開到學？」", "opts": [{"t": "「Data Science 一年得 1、7 月兩期，最快係 2027 年 1 月。截止日我同 team 確認再覆你。」", "ok": true, "go": "b", "fb": "入學月份啱，⚠️ 截止日未查到就照直講。", "s": ["S8"]}, {"t": "「得呀，每個月都開。」", "ok": false, "fb": "Data Science 一年得 1、7 月兩期。"}, {"t": "「10 月期仲報得。」", "ok": false, "fb": "10 月期截止日（9 月 28／29 號）已過，而且 Data Science 冇 10 月期。"}]}, "b": {"who": "👩‍💻 學生", "text": "「我學歷夠唔夠？」", "opts": [{"t": "「電腦 2:2 已達標，再加 HKDSE Level 3 或 IELTS 6.0 嘅英文就得。」", "ok": true, "go": "c", "fb": "學歷 + 英文都講齊。", "s": ["S8"]}, {"t": "「要 2:1 先得。」", "ok": false, "fb": "2:1 係非電腦學科先要。"}]}, "c": {"who": "👩‍💻 學生", "text": "「咁申請之後幾耐知結果？」", "opts": [{"t": "「14 日內出 offer，之後喺註冊限期前確認學位同交學費。」", "ok": true, "go": "d", "fb": "兼讀研究院流程講啱。", "s": ["S15"]}, {"t": "「大概 2、3 個月。」", "ok": false, "fb": "係 14 日內。"}]}, "d": {"who": "👩‍💻 學生", "text": "「好，我試下申請！」", "end": "🎉 搞掂！入學月份、要求、流程都講清楚，⚠️ 唔肯定嘅截止日交返 team。"}}}], "n": 4, "iso": "2026-10-16", "key": "sunderland-course-day4", "nextDay": "#day5"}, {"short": "Day 5", "date": "10/17（六）", "title": "認受性同 NCR 註冊 🛡️", "goal": "被問「認唔認」時，答得準、唔誇大、唔驚。", "minutes": 15, "sources": ["S3", "S8", "S16", "S17", "S18", "S20", "S23"], "badges": [[235, "🏆", "認受性守門員"], [150, "🥈", "NCR 記憶王"], [0, "🌱", "起步新星"]], "bye": "聽日 Day 6 輕鬆啲：ENLS 同溫習 👋", "steps": [{"type": "cards", "icon": "📇", "name": "三句講晒 + 重點", "items": [{"t": "三句講晒 1", "q": "課程喺邊度註冊？", "a": "主要課程喺教育局《非本地高等及專業教育（規管）條例》（第 493 章）註冊，有 NCR 編號。", "s": ["S16"]}, {"t": "三句講晒 2", "q": "香港畢業生攞嘅學位同英國本校一唔一樣？", "a": "學校寫明香港畢業生攞同英國本校一樣嘅學位同證書。", "s": ["S3", "S8"]}, {"t": "三句講晒 3", "q": "僱主一定承認？", "a": "教育局同學校都寫：<b>個別僱主可酌情決定是否承認</b>。", "s": ["S16"]}, {"t": "公務員", "q": "持非本地學歷可唔可以投考公務員？", "a": "可以申請，政府會評估學歷係咪同職位入職要求「水平相若」。唔可以保證一定得。", "s": ["S20"]}, {"t": "HND", "q": "HND 嘅認受性要點講？", "a": "頒授機構係 Pearson，教育局寫 accreditation 係「By external authority」。", "s": ["S18"]}, {"t": "⚠️ 小心", "q": "Online MBA、MSc Psychology、MSc IBM 係咪註冊課程？", "a": "⚠️ EDB 註冊名單未見呢幾個名稱，唔好自己答係咪註冊課程。", "s": ["S16"]}]}, {"type": "sort", "icon": "🚦", "name": "講得 vs 紅線", "sub": "邊句可以講？邊句係紅線？", "cols": 2, "tiers": [["ok", "✅ 講得"], ["no", "⛔ 紅線"]], "items": [["「課程喺教育局第 493 章註冊，有 NCR 編號。」", "ok", "", ["S16"]], ["「同本地大學學位一樣。」", "no", "紅線，唔好講。"], ["「香港畢業生攞同英國本校一樣嘅學位。」", "ok", "", ["S3"]], ["「政府一定承認。」", "no", "紅線，唔好講。"], ["「係咪承認由個別僱主酌情決定。」", "ok", "", ["S16"]], ["「讀完一定考到公務員。」", "no", "紅線，唔好講。政府會另外評估，唔保證。", ["S20"]], ["「英國 TEF 2023 攞咗銀級。」", "ok", "", ["S23"]], ["「Online MBA 實係註冊課程。」", "no", "⚠️ EDB 名單未見，唔好自己答。", ["S16"]]], "wrongMsg": "諗清楚，呢句有冇誇大？🤔"}, {"type": "sort", "icon": "🔢", "name": "NCR 編號配對", "sub": "將編號拖去對應課程。", "cols": 2, "tiers": [["bm", "BA Business and Management"], ["hrm", "BA Business and HRM"], ["mkt", "BA Business and Marketing Mgmt"], ["mba", "MBA"], ["ds", "MSc Data Science"], ["hnd", "HND in Business"]], "items": [["252466", "bm", "", ["S16"]], ["252649", "hrm", "", ["S16"]], ["253288", "mkt", "", ["S16"]], ["252467", "mba", "", ["S17"]], ["252794", "ds", "", ["S16"]], ["252947", "hnd", "", ["S18"]]]}, {"type": "branch", "icon": "💬", "name": "家長質疑角色扮演", "start": "a", "nodes": {"a": {"who": "👨 家長", "text": "「呢間係咪野雞大學嚟㗎？」", "opts": [{"t": "「明白你擔心。University of Sunderland 係英國公帑資助大學，喺英國 TEF 2023 攞咗銀級。」", "ok": true, "go": "b", "fb": "先體諒，再用事實答。", "s": ["S23"]}, {"t": "「梗係唔係啦！同本地大學一樣㗎。」", "ok": false, "fb": "⛔ 紅線：唔好話同本地大學學位一樣。"}, {"t": "「你上網睇下啦。」", "ok": false, "fb": "太敷衍，要畀佢具體事實。"}]}, "b": {"who": "👨 家長", "text": "「咁香港認唔認㗎？」", "opts": [{"t": "「香港呢邊嘅課程喺教育局第 493 章註冊，例如 top-up 商業管理嘅編號係 252466，你可以自己上教育局網站查。」", "ok": true, "go": "c", "fb": "畀編號佢自己查，最有說服力。", "s": ["S16"]}, {"t": "「政府一定承認。」", "ok": false, "fb": "⛔ 紅線。"}]}, "c": {"who": "👨 家長", "text": "「我個仔想考公務員喎。」", "opts": [{"t": "「要講清楚，教育局都寫明係咪承認由個別僱主決定；如果想考公務員，政府會另外評估學歷。」", "ok": true, "go": "d", "fb": "準、唔誇大。", "s": ["S16", "S20"]}, {"t": "「讀完一定考到。」", "ok": false, "fb": "⛔ 紅線：唔可以保證。"}, {"t": "「公務員唔收非本地學歷。」", "ok": false, "fb": "錯，可以申請，政府會評估「水平相若」。", "s": ["S20"]}]}, "d": {"who": "👨 家長", "text": "「OK，咁我明白多啲。」", "end": "🎉 完整 script 講晒：體諒 → 公帑資助 + TEF 銀級 → 第 493 章 + NCR 編號 → 僱主酌情、公務員另外評估。"}}}, {"type": "practice", "icon": "🎤", "name": "唔睇稿講一次", "sec": 45, "prompt": "自己講 2 次，第二次唔睇稿。", "checks": ["先講「明白你擔心」", "英國公帑資助 + TEF 2023 銀級", "第 493 章註冊 + 252466", "個別僱主決定是否承認", "公務員：政府另外評估"], "model": "「明白你擔心。University of Sunderland 係英國公帑資助大學，喺英國 TEF 2023 攞咗銀級。香港呢邊嘅課程喺教育局第 493 章註冊，例如 top-up 商業管理嘅編號係 252466，你可以自己上教育局網站查。不過要講清楚，教育局都寫明係咪承認由個別僱主決定；如果想考公務員，政府會另外評估學歷。」", "s": ["S16", "S23"]}], "n": 5, "iso": "2026-10-17", "key": "sunderland-course-day5", "nextDay": "#day6"}, {"short": "Day 6", "date": "10/18（日）", "title": "ENLS、bursary、NITTP + 溫習（輕）🍵", "goal": "講得出邊個可以申請 ENLS、邊個唔得；順手溫返頭 5 日。", "minutes": 15, "sources": ["S2", "S3", "S6", "S8", "S19", "S29"], "badges": [[190, "🏆", "資助小專家"], [125, "🥈", "溫習達人"], [0, "🌱", "慢慢嚟"]], "bye": "聽日 Day 7 學一次諮詢嘅流程 👋", "steps": [{"type": "cards", "icon": "📇", "name": "資助卡", "items": [{"t": "ENLS", "q": "ENLS 適用咩課程？", "a": "擴展的免入息審查貸款計劃：適用類別包括第 493 章嘅註冊課程同豁免課程。", "s": ["S19"]}, {"t": "ENLS", "q": "邊個可以申請？", "a": "有香港居留權，或本人／家人申請前連續居港滿 3 年。", "s": ["S19"]}, {"t": "ENLS", "q": "擔保人條件？", "a": "香港永久居民、21 歲或以上、喺香港有穩定工作。", "s": ["S19"]}, {"t": "ENLS", "q": "MBA／全日制學士用 ENLS 有咩限制？", "a": "MBA 頁面寫 ENLS「只適用於香港 modules」；全日制學士去英國校區期間嘅學費唔適用。⚠️ 每個課程（尤其網上課程）係咪喺學資處合資格名單，要確認。", "s": ["S6", "S2"]}, {"t": "Bursary", "q": "Bursary 幾多？", "a": "top-up、MBA 等頁面寫「最高 HK$5,000」，有條款。⚠️ 具體條款、可唔可以疊加要問。", "s": ["S3"]}, {"t": "全日制資助", "q": "全日制學士資助？", "a": "2026/27 最高 HK$30,000，截止 2026-08-14，已過期。", "s": ["S2"]}, {"t": "NITTP", "q": "NITTP 係點？", "a": "只限 MSc Data Science。公司 1:1 配對資助員工，每間公司每財政年度上限 HK$250,000；員工要係香港永久居民同全職受僱；公司要喺開課前最少 5 星期申請。", "s": ["S8", "S29"]}]}, {"type": "sort", "icon": "✅", "name": "ENLS 申唔申請到？", "sub": "淨係睇身份／簽證呢一關。", "cols": 2, "tiers": [["y", "✅ 符合"], ["n", "❌ 唔包"]], "items": [["有香港居留權", "y", "", ["S19"]], ["申請前連續居港滿 3 年", "y", "", ["S19"]], ["持學生簽證", "n", "", ["S19"]], ["持「非本地畢業生留港／回港就業安排」簽證", "n", "", ["S19"]], ["18 歲後先發嘅受養人簽證", "n", "", ["S19"]]]}, {"type": "cards", "icon": "🔁", "name": "溫習卡（Day 1–6）", "items": [{"t": "Day 1", "q": "香港分校地址？", "a": "灣仔告士打道 181–185 號中怡大廈 1 樓", "s": []}, {"t": "Day 2", "q": "Top-up 學費？", "a": "HK$83,000 + HK$600 行政費", "s": []}, {"t": "Day 4", "q": "MBA 入學月份？", "a": "1、4、7、10 月", "s": []}, {"t": "Day 4", "q": "MSc Data Science 入學月份？", "a": "1、7 月", "s": []}, {"t": "Day 3", "q": "HND 英文要求？", "a": "IELTS 5.5", "s": []}, {"t": "Day 3", "q": "全日制學士入學要求？", "a": "UCAS 112 + IELTS 6.0", "s": []}, {"t": "Day 5", "q": "認受性一句講？", "a": "第 493 章註冊；個別僱主酌情決定是否承認", "s": []}, {"t": "Day 6", "q": "持學生簽證可唔可以申請 ENLS？", "a": "唔可以", "s": []}, {"t": "Day 6", "q": "ENLS 擔保人條件？", "a": "香港永久居民、21 歲或以上、有穩定工作", "s": []}, {"t": "Day 6", "q": "NITTP 公司要幾時申請？", "a": "開課前最少 5 星期", "s": []}]}, {"type": "quiz", "icon": "❓", "name": "快問快答", "items": [{"q": "NITTP 適用邊個課程？", "o": ["所有碩士", "只限 MSc Data Science", "MBA", "Top-up"], "a": 1, "e": "只限 MSc Data Science。", "s": ["S8"]}, {"q": "NITTP 每間公司每財政年度上限？", "o": ["HK$30,000", "HK$100,000", "HK$250,000", "冇上限"], "a": 2, "e": "公司 1:1 配對，上限 HK$250,000。", "s": ["S8"]}, {"q": "學生問 bursary 可唔可以同其他優惠疊加？", "o": ["可以", "唔可以", "⚠️ 具體條款、可唔可以疊加要問", "睇心情"], "a": 2, "e": "⚠️ 最高 HK$5,000，有條款，要問。", "s": ["S3"]}, {"q": "全日制學士資助 2026/27 仲申唔申請到？", "o": ["得，截止 12 月", "已過期（截止 2026-08-14）", "冇呢個資助", "要問 NITTP"], "a": 1, "e": "最高 HK$30,000，截止 2026-08-14，已過期。", "s": ["S2"]}]}], "n": 6, "iso": "2026-10-18", "key": "sunderland-course-day6", "nextDay": "#day7"}, {"short": "Day 7", "date": "10/19（一）", "title": "一次諮詢嘅流程（輕）🗣️", "goal": "記住 5 步流程：開場 → 問背景 → 配課程 → 講細節 → 收尾。", "minutes": 15, "sources": ["S3", "S6"], "badges": [[200, "🏆", "諮詢流程大師"], [130, "🥈", "有條有理"], [0, "🌱", "起步新星"]], "bye": "第一個星期完成！🎉", "introNote": "原則：先了解背景，唔好一開口就報價；唔肯定就話「我同 team 確認再覆你」，24 小時內覆。", "steps": [{"type": "order", "icon": "🪜", "name": "5 步排次序", "sub": "按次序撳（大約 20–30 分鐘）。", "items": [["開場（2 分鐘）", "自我介紹、問點知道學校、今日想解決咩。"], ["問背景（8–10 分鐘）", "最高學歷同 class、英文成績、工作年資同行業、讀書目的（升職、轉工、考公務員等）、想幾時開始、預算、會唔會用 ENLS 或公司資助。"], ["配課程（5 分鐘）", "用入學要求對一對，最多推 1–2 個選擇，講清楚點解啱佢。"], ["講細節（5 分鐘）", "上堂模式（例如 top-up 夜間面授，每個 module 60 小時；MBA 每個 module 30–40 小時面授，建議每星期溫 12 小時）、學費分期、HK$600 行政費、ENLS／bursary、入學月份。⚠️ 上堂實際係星期幾、幾點，要問 team。", ["S3", "S6"]], ["收尾（3 分鐘）", "講清楚下一步：申請連結、要準備咩文件、你幾時跟進，即場約好時間。完咗即刻入 CRM：背景、課程興趣、顧慮、下一步同日期。"]], "doneMsg": "🎉 開場 → 問背景 → 配課程 → 講細節 → 收尾"}, {"type": "sort", "icon": "🧩", "name": "呢句屬邊一步？", "sub": "將每句拖去對應步驟。", "cols": 1, "tiers": [["s1", "① 開場"], ["s2", "② 問背景"], ["s3", "③ 配課程"], ["s4", "④ 講細節"], ["s5", "⑤ 收尾"]], "items": [["「你點知道我哋學校？今日想解決咩？」", "s1"], ["「你而家最高學歷係咩？大概幾多 class／GPA？」", "s2"], ["「有冇 IELTS 或者其他英文成績？之前讀書係咪用英文教？」", "s2"], ["「睇你背景，最啱係呢 1–2 個選擇，因為……」", "s3"], ["「MBA 每個 module 30–40 小時面授，建議每星期溫 12 小時。」", "s4", "", ["S6"]], ["「呢個係申請連結，我星期四再打畀你，好唔好？」", "s5"]]}, {"type": "branch", "icon": "💬", "name": "角色扮演：一開口就問價", "start": "a", "nodes": {"a": {"who": "🧑 查詢者", "text": "「Hi，MBA 幾錢呀？」", "opts": [{"t": "「HK$156,000，5 期。」", "ok": false, "fb": "原則：唔好一開口就報價，先了解背景。"}, {"t": "「多謝你查詢！我係 Stephanie。想問下你點知道我哋學校，今日最想解決咩？」", "ok": true, "go": "b", "fb": "先開場，再問背景。"}]}, "b": {"who": "🧑 查詢者", "text": "「朋友介紹嘅，想升職，所以睇下 MBA。」", "opts": [{"t": "「明白。你而家最高學歷係咩？做緊邊行、做咗幾耐？」", "ok": true, "go": "c", "fb": "問背景：學歷 + 工作，用嚟對入學要求。"}, {"t": "「咁你一定啱讀 MBA，即刻報啦！」", "ok": false, "fb": "未問背景就推，太早。"}]}, "c": {"who": "🧑 查詢者", "text": "「我有學士，2:2，做咗 4 年 marketing。不過我想知星期幾上堂？」", "opts": [{"t": "「上堂實際係星期幾、幾點，我同 team 確認再 24 小時內覆你。」", "ok": true, "go": "d", "fb": "⚠️ 唔肯定就照直講，24 小時內覆。"}, {"t": "「星期六成日上。」", "ok": false, "fb": "⚠️ 資料未有，唔好估。"}]}, "d": {"who": "🧑 查詢者", "text": "「好，咁之後點？」", "opts": [{"t": "「我 send 申請連結同文件清單畀你，星期四再打畀你跟進，好唔好？」", "ok": true, "go": "e", "fb": "收尾：下一步、文件、跟進時間，即場約好。"}, {"t": "「你得閒再搵我啦。」", "ok": false, "fb": "收尾要講清楚下一步同即場約時間。"}]}, "e": {"who": "🧑 查詢者", "text": "「OK，星期四傾！」", "end": "🎉 完咗即刻入 CRM：背景、課程興趣、顧慮、下一步同日期。"}}}, {"type": "practice", "icon": "⏱️", "name": "3 分鐘背景問題", "sec": 180, "prompt": "自己問自己一次 6 條背景問題，3 分鐘內講完。", "checks": ["「你而家最高學歷係咩？大概幾多 class／GPA？」", "「有冇 IELTS 或者其他英文成績？之前讀書係咪用英文教？」", "「做緊邊行？做咗幾耐？」", "「讀呢個課程最想達到咩？」", "「想幾時開始讀？」", "「學費方面有冇預算？有冇考慮政府貸款或者公司資助？」"], "model": "5 步每步一句開場白（自己寫低再對）：<br>① 「你點知道我哋學校？今日想解決咩？」<br>② 「你而家最高學歷係咩？」<br>③ 「睇你背景，我建議呢 1–2 個選擇……」<br>④ 「講下上堂模式、學費分期同 HK$600 行政費……」<br>⑤ 「下一步係……我幾時跟進你？」"}], "n": 7, "iso": "2026-10-19", "key": "sunderland-course-day7", "nextDay": ""}, {"title": "處理顧慮（輕）", "soon": true, "n": 8, "iso": "2026-10-20", "date": "10/20（二）", "key": "sunderland-course-day8", "short": "Day 8"}, {"title": "跟進節奏 + CRM 習慣（輕）", "soon": true, "n": 9, "iso": "2026-10-21", "date": "10/21（三）", "key": "sunderland-course-day9", "short": "Day 9"}, {"title": "FAQ 快問快答（最輕）", "soon": true, "n": 10, "iso": "2026-10-22", "date": "10/22（四）", "key": "sunderland-course-day10", "short": "Day 10"}, {"title": "FAQ 全套 + ⚠️ 項目 + 第一日問 manager 嘅問題", "soon": true, "n": 11, "iso": "2026-10-23", "date": "10/23（五）", "key": "sunderland-course-day11", "short": "Day 11"}, {"title": "完整模擬諮詢", "soon": true, "n": 12, "iso": "2026-10-24", "date": "10/24（六）", "key": "sunderland-course-day12", "short": "Day 12"}];
+function todayISO(){var d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}</script>
+<script>var U=window.SRC,TIMER=null;
+function mount(D){
+document.getElementById('htitle').textContent=D.short+'｜'+D.date;
+var $=function(id){return document.getElementById(id)};
+function src(a){if(!a||!a.length)return"";return '<div class="src">'+a.map(function(k){return '<a href="'+U[k]+'" target="_blank" rel="noopener">'+k+'</a>'}).join("")+'</div>'}
+function esc(t){return t}
+var KEY=D.key,TOTAL=D.minutes*60;
+var st={step:0,pts:0,time:TOTAL,run:true,done:false,d:{}};
+try{var sv=JSON.parse(localStorage.getItem(KEY));if(sv)for(var k in sv)st[k]=sv[k]}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+function toast(m){var t=$("toast");t.textContent=m;t.classList.add("on");clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove("on")},1400)}
+function addPts(n){st.pts+=n;$("pts").textContent=st.pts;save()}
+function fmt(s){return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
+function tick(){$("clock").textContent=st.time>0?fmt(st.time):"時間到 ⌛";$("tbtn").textContent=st.run?"⏸":"▶"}
+var steps=D.steps,N=steps.length;
+function S(i){return st.d[i]||(st.d[i]={})}
+function complete(i){var s=S(i);if(!s.c){s.c=1;save()}progress()}
+function last(){return st.step==N+1}
+clearInterval(TIMER);TIMER=setInterval(function(){if(st.run&&st.time>0&&st.step>0&&!last()){st.time--;tick();if(st.time%5==0)save();if(st.time==0)toast(D.minutes+" 分鐘到，慢慢做完佢都得 😊")}},1000);
+function confetti(n){var box=$("confetti"),cols=["#e8672c","#f4a03a","#ffd166","#2f9e6a","#ef476f","#4d96ff"];for(var i=0;i<n;i++){var p=document.createElement("i");p.style.left=Math.random()*100+"vw";p.style.background=cols[i%cols.length];p.style.animationDuration=(1.6+Math.random()*1.8)+"s";p.style.animationDelay=Math.random()*.5+"s";box.appendChild(p);(function(p){setTimeout(function(){p.remove()},4200)})(p)}}
+function progress(){var c=0;for(var i=0;i<N;i++)if(S(i+1).c)c++;$("prog").style.width=Math.round(c/N*100)+"%"}
+// build sections
+var main=$("main");
+var html='<section id="s0"><h2>'+D.title+'</h2><p class="sub">今日目標：'+D.goal+'</p><div class="box"><b>'+D.minutes+' 分鐘玩法</b><ul class="tight">'+steps.map(function(x){return '<li>'+x.icon+' '+x.name+'</li>'}).join("")+'</ul>'+(D.introNote?'<p class="sub" style="margin:8px 0 0">'+D.introNote+'</p>':'')+'<p class="sub" style="margin:8px 0 0">進度會自動儲喺部機度，閂咗再開都得。</p></div><button class="btn full" id="startBtn">開始 🚀</button><p style="text-align:center"><a href="#home">← 返課程目錄</a> · <button class="btn ghost" id="resetBtn" style="font-size:13px;padding:6px 12px">由頭再嚟</button></p></section>';
+steps.forEach(function(x,i){html+='<section id="s'+(i+1)+'"><h2>'+x.icon+' '+x.name+'</h2>'+(x.sub?'<p class="sub">'+x.sub+'</p>':'')+'<div id="b'+(i+1)+'"></div>'+(x.note?'<div style="margin-top:10px">'+x.note+'</div>':'')+'</section>'});
+html+='<section id="s'+(N+1)+'"><h2 style="text-align:center">搞掂 '+D.short+' 🎉</h2><div class="badge" id="badge"></div><div class="big"><span id="fscore">0</span> 分</div><p class="sub" style="text-align:center" id="fsum"></p><div class="box"><b>來源</b><div class="src">'+D.sources.map(function(k){return '<a href="'+U[k]+'" target="_blank" rel="noopener">'+k+'</a>'}).join("｜")+'</div></div><div class="row"><a class="btn ghost" href="#home" style="text-align:center;text-decoration:none">課程目錄</a>'+(D.nextDay?'<a class="btn" href="'+D.nextDay+'" style="text-align:center;text-decoration:none">下一日 →</a>':'')+'</div><p style="text-align:center"><button class="btn ghost" id="again" style="font-size:13px;padding:6px 12px">再玩一次</button></p></section><div class="steps" id="steps"></div>';
+main.innerHTML=html;
+var names=["開始"].concat(steps.map(function(x){return x.name})).concat(["完成"]);
+function go(n){
+ st.step=Math.max(0,Math.min(N+1,n));
+ document.querySelectorAll("#main>section").forEach(function(s,i){s.classList.toggle("on",i==st.step)});
+ $("steps").innerHTML=names.map(function(s,i){return '<span class="'+(i<st.step?"done":i==st.step?"cur":"")+'">'+s+'</span>'}).join("");
+ $("back").disabled=st.step==0;$("next").style.visibility=last()?"hidden":"visible";
+ $("next").textContent=st.step==N?"睇成績 🏁":"下一步 →";
+ if(st.step>0&&!last()){var x=steps[st.step-1];R[x.type](x,S(st.step),$("b"+st.step),st.step)}
+ if(last())finish();
+ progress();save();window.scrollTo(0,0);
+}
+function nextStep(){go(st.step+1)}
+var R={};
+// ---- cards
+R.cards=function(x,s,el,idx){
+ s.card=s.card||0;s.seen=s.seen||[];
+ function draw(){var c=x.items[s.card];
+  el.innerHTML='<div class="deck"><div class="fc"><div class="face front"><div class="tag">'+c.t+' · '+(s.card+1)+'/'+x.items.length+'</div><div class="q">'+c.q+'</div><div class="hint">👆 撳一下翻轉</div></div><div class="face back"><div class="tag" style="color:var(--muted)">'+c.t+'</div><div class="a">'+c.a+'</div>'+src(c.s)+'</div></div></div><div class="dots">'+x.items.map(function(_,i){return '<i class="'+(i==s.card?"on":"")+'"></i>'}).join("")+'</div><div class="row"><button class="btn ghost cprev">← 上一張</button><button class="btn cnext">'+(s.card==x.items.length-1?"下一關 →":"下一張 →")+'</button></div>';
+  var fc=el.querySelector(".fc");
+  fc.onclick=function(e){if(e.target.tagName=="A")return;fc.classList.toggle("flip");if(s.seen.indexOf(s.card)<0){s.seen.push(s.card);addPts(5);if(s.seen.length==x.items.length)complete(idx)}};
+  var pv=el.querySelector(".cprev"),nx=el.querySelector(".cnext");pv.disabled=s.card==0;
+  pv.onclick=function(){if(s.card>0){s.card--;draw();save()}};
+  nx.onclick=function(){if(s.card<x.items.length-1){s.card++;draw();save()}else nextStep()};
+  var d=el.querySelector(".deck"),x0=null;d.addEventListener("touchstart",function(e){x0=e.touches[0].clientX},{passive:true});d.addEventListener("touchend",function(e){if(x0===null)return;var dx=e.changedTouches[0].clientX-x0;if(dx<-50)nx.click();else if(dx>50&&s.card>0)pv.click();x0=null});
+ }
+ draw();
+};
+// ---- sort (drag or tap into buckets)
+R.sort=function(x,s,el,idx){
+ s.placed=s.placed||{};var sel=null;
+ el.innerHTML='<div class="box"><div class="pool"></div></div><div class="tiers '+(x.cols?"c"+x.cols:"")+'">'+x.tiers.map(function(t){return '<div class="tier" data-t="'+t[0]+'"><h4>'+t[1]+'</h4></div>'}).join("")+'</div><div class="explbox"></div><p class="sub mmsg" style="text-align:center"></p>';
+ var pool=el.querySelector(".pool"),eb=el.querySelector(".explbox");
+ function tierEl(t){return el.querySelector('.tier[data-t="'+t+'"]')}
+ function msg(){var n=Object.keys(s.placed).length;el.querySelector(".mmsg").textContent=n==x.items.length?(x.doneMsg||"🎉 全部啱晒！"):"已放 "+n+"/"+x.items.length}
+ function addExpl(i){var it=x.items[i];if(!it[2])return;var d=document.createElement("div");d.className="box";d.style.fontSize="14px";d.innerHTML="<b>"+it[0]+"</b> → "+it[2]+src(it[3]);eb.appendChild(d)}
+ var order=x.items.map(function(_,i){return i});order.sort(function(a,b){return ((a*7+3)%x.items.length)-((b*7+3)%x.items.length)||a-b});
+ order.forEach(function(i){var c=document.createElement("div");c.className="chip";c.textContent=x.items[i][0];c.dataset.i=i;
+  if(s.placed[i]){c.classList.add("ok");tierEl(x.items[i][1]).appendChild(c);return}pool.appendChild(c);bind(c)});
+ x.items.forEach(function(_,i){if(s.placed[i])addExpl(i)});
+ el.querySelectorAll(".tier").forEach(function(t){t.onclick=function(){if(sel)drop(sel,t)}});
+ msg();
+ function drop(c,t){var i=+c.dataset.i;
+  if(x.items[i][1]==t.dataset.t){c.classList.remove("sel","shake");c.classList.add("ok");c.style.cssText="";t.appendChild(c);c.onclick=null;c.onpointerdown=null;s.placed[i]=1;addPts(10);toast("✅ 啱！+10");addExpl(i);msg();if(Object.keys(s.placed).length==x.items.length){complete(idx);confetti(60)}}
+  else{c.classList.remove("shake");void c.offsetWidth;c.classList.add("shake");c.addEventListener("animationend",function(){c.classList.remove("shake")},{once:true});toast(x.wrongMsg||"唔啱喎，再諗下 🤔")}
+  sel=null}
+ function bind(c){
+  c.onclick=function(e){e.stopPropagation();el.querySelectorAll(".chip.sel").forEach(function(z){z.classList.remove("sel")});sel=c;c.classList.add("sel")};
+  c.onpointerdown=function(e){var sx=e.clientX,sy=e.clientY,mv=false,r=c.getBoundingClientRect();
+   function m(ev){var dx=ev.clientX-sx,dy=ev.clientY-sy;if(!mv&&Math.abs(dx)+Math.abs(dy)<8)return;mv=true;c.style.position="fixed";c.style.left=(r.left+dx)+"px";c.style.top=(r.top+dy)+"px";c.style.width=r.width+"px";c.style.zIndex=99;c.style.pointerEvents="none";el.querySelectorAll(".tier").forEach(function(t){t.classList.remove("hover")});var u=document.elementFromPoint(ev.clientX,ev.clientY),t=u&&u.closest(".tier");if(t)t.classList.add("hover")}
+   function up(ev){document.removeEventListener("pointermove",m);document.removeEventListener("pointerup",up);el.querySelectorAll(".tier").forEach(function(t){t.classList.remove("hover")});if(!mv)return;var u=document.elementFromPoint(ev.clientX,ev.clientY),t=u&&u.closest(".tier");c.style.cssText="";if(t)drop(c,t)}
+   document.addEventListener("pointermove",m);document.addEventListener("pointerup",up)}
+ }
+};
+// ---- quiz
+R.quiz=function(x,s,el,idx){
+ s.i=s.i||0;s.ans=s.ans||[];s.streak=s.streak||0;s.best=s.best||0;
+ function draw(){
+  var head='<div class="stat"><span>第 <b>'+Math.min(s.i+1,x.items.length)+'</b>/'+x.items.length+' 題</span><span>🔥 連勝 <b>'+s.streak+'</b></span></div>';
+  if(s.i>=x.items.length){var c=s.ans.filter(Boolean).length;el.innerHTML=head+'<div class="box"><div class="big">'+c+'/'+x.items.length+'</div><p style="text-align:center">最長連勝 🔥 '+s.best+'</p><button class="btn full qdone">下一關 →</button></div>';el.querySelector(".qdone").onclick=nextStep;return}
+  var q=x.items[s.i];
+  el.innerHTML=head+'<div class="box"><b style="font-size:17px">'+q.q+'</b>'+q.o.map(function(o,j){return '<button class="opt" data-j="'+j+'">'+o+'</button>'}).join("")+'<div class="fb"></div></div>';
+  el.querySelectorAll(".opt").forEach(function(b){b.onclick=function(){ans(+b.dataset.j)}});
+ }
+ function ans(j){var q=x.items[s.i],ok=j==q.a;
+  el.querySelectorAll(".opt").forEach(function(b,k){b.disabled=true;if(k==q.a)b.classList.add("right");else if(k==j)b.classList.add("wrong")});
+  if(ok){s.streak++;s.best=Math.max(s.best,s.streak);addPts(20+(s.streak>=3?5:0))}else s.streak=0;
+  s.ans.push(ok);s.i++;if(s.i>=x.items.length)complete(idx);save();
+  var fb=el.querySelector(".fb");fb.className="fb show "+(ok?"good":"nope");
+  fb.innerHTML=(ok?"✅ 啱！+20"+(s.streak>=3?"（🔥 連勝 +5）":""):"❌ 差少少")+"<br>"+q.e+src(q.s)+'<button class="btn full qnext" style="margin-top:10px">'+(s.i>=x.items.length?"睇結果":"下一題 →")+'</button>';
+  el.querySelector(".qnext").onclick=draw;if(ok&&s.streak>=3)confetti(25)}
+ draw();
+};
+// ---- guess (slider)
+R.guess=function(x,s,el,idx){
+ s.i=s.i||0;s.res=s.res||[];
+ function f(v){return x.prefix+Number(v).toLocaleString("en-US")+(x.suffix||"")}
+ function draw(){
+  if(s.i>=x.items.length){var tot=s.res.reduce(function(a,b){return a+b},0);el.innerHTML='<div class="box"><div class="big">'+tot+' 分</div><p style="text-align:center">'+x.items.length+' 題估完 💰</p><button class="btn full gdone">下一關 →</button></div>';el.querySelector(".gdone").onclick=nextStep;return}
+  var q=x.items[s.i],mid=Math.round((q.min+q.max)/2/q.step)*q.step;
+  el.innerHTML='<div class="stat"><span>第 <b>'+(s.i+1)+'</b>/'+x.items.length+' 題</span></div><div class="box"><b style="font-size:17px">'+q.q+'</b><div class="guessv">'+f(mid)+'</div><input type="range" min="'+q.min+'" max="'+q.max+'" step="'+q.step+'" value="'+mid+'"><div class="row" style="font-size:12px;color:var(--muted)"><span>'+f(q.min)+'</span><span style="text-align:right">'+f(q.max)+'</span></div><button class="btn full gok" style="margin-top:10px">就係呢個價！</button><div class="fb"></div></div>';
+  var r=el.querySelector("input"),v=el.querySelector(".guessv");r.oninput=function(){v.textContent=f(r.value)};
+  el.querySelector(".gok").onclick=function(){var g=+r.value,diff=Math.abs(g-q.ans)/q.ans,p=diff==0?25:diff<=.05?20:diff<=.15?10:3;
+   r.disabled=true;this.disabled=true;s.res.push(p);addPts(p);s.i++;if(s.i>=x.items.length)complete(idx);save();
+   var fb=el.querySelector(".fb");fb.className="fb show "+(diff<=.05?"good":"nope");
+   fb.innerHTML=(diff==0?"🎯 一蚊都唔差！":diff<=.05?"👍 好接近！":diff<=.15?"🙂 差少少":"😅 差得遠喎")+" +"+p+"<br>答案："+f(q.ans)+"<br>"+q.e+src(q.s)+'<button class="btn full gnext" style="margin-top:10px">'+(s.i>=x.items.length?"睇結果":"下一題 →")+'</button>';
+   el.querySelector(".gnext").onclick=draw;if(diff==0)confetti(20)}
+ }
+ draw();
+};
+// ---- order (tap in sequence)
+R.order=function(x,s,el,idx){
+ s.n=s.n||0;
+ el.innerHTML='<div class="box"><b>撳嘅次序：</b><div class="ord done"></div></div><div class="box"><div class="ord pool2"></div></div><div class="fb"></div>';
+ var dn=el.querySelector(".done"),pl=el.querySelector(".pool2");
+ function put(i){var d=document.createElement("div");d.className="chip ok";d.innerHTML='<span class="num">'+(i+1)+'</span><span><b>'+x.items[i][0]+'</b>'+(x.items[i][1]?'<div class="expl">'+x.items[i][1]+'</div>':'')+src(x.items[i][2])+'</span>';dn.appendChild(d)}
+ for(var i=0;i<s.n;i++)put(i);
+ var ord=x.items.map(function(_,i){return i});ord.sort(function(a,b){return ((a*3+1)%x.items.length)-((b*3+1)%x.items.length)||a-b});
+ ord.forEach(function(i){if(i<s.n)return;var c=document.createElement("div");c.className="chip";c.dataset.i=i;c.textContent=x.items[i][0];pl.appendChild(c);
+  c.onclick=function(){if(+c.dataset.i==s.n){c.remove();put(s.n);s.n++;addPts(10);toast("✅ 啱！+10");save();if(s.n==x.items.length)fin()}else{c.classList.remove("shake");void c.offsetWidth;c.classList.add("shake");c.addEventListener("animationend",function(){c.classList.remove("shake")},{once:true});toast("未到呢步住 🤔")}}});
+ function fin(){complete(idx);confetti(50);var fb=el.querySelector(".fb");fb.className="fb show good";fb.innerHTML=x.doneMsg||"🎉 次序啱晒！"}
+ if(s.n==x.items.length){var fb=el.querySelector(".fb");fb.className="fb show good";fb.innerHTML=x.doneMsg||"🎉 次序啱晒！"}
+};
+// ---- branching role-play
+R.branch=function(x,s,el,idx){
+ s.node=s.node||x.start;s.log=s.log||[];s.tried=s.tried||{};
+ function draw(){
+  var n=x.nodes[s.node];
+  var h='<div class="log">'+s.log.join("")+'</div>';
+  h+='<div class="say">'+n.who+'：'+n.text+'</div>';
+  if(n.end){h+='<div class="fb show good">'+n.end+src(n.s)+'</div>';el.innerHTML=h;if(!S(idx).c){complete(idx);addPts(20);confetti(40)}return}
+  h+='<p class="sub" style="margin:4px 0">你會點覆？</p>'+n.opts.map(function(o,j){var t=s.tried[s.node+":"+j];return '<button class="opt'+(t?" wrong":"")+'" data-j="'+j+'"'+(t?" disabled":"")+'>'+o.t+'</button>'}).join("")+'<div class="fb"></div>';
+  el.innerHTML=h;
+  el.querySelectorAll(".opt").forEach(function(b){b.onclick=function(){pick(+b.dataset.j)}});
+ }
+ function pick(j){var n=x.nodes[s.node],o=n.opts[j],fb=el.querySelector(".fb");
+  if(o.ok){addPts(o.pts||15);el.querySelectorAll(".opt").forEach(function(b){b.disabled=true});el.querySelectorAll(".opt")[j].classList.add("right");
+   fb.className="fb show good";fb.innerHTML="✅ "+o.fb+src(o.s)+'<button class="btn full bnext" style="margin-top:10px">繼續 →</button>';
+   el.querySelector(".bnext").onclick=function(){s.log.push('<div class="say">'+n.who+'：'+n.text+'</div><div class="me">你：'+o.t+'</div>');s.node=o.go;save();draw()}}
+  else{s.tried[s.node+":"+j]=1;save();el.querySelectorAll(".opt")[j].classList.add("wrong");el.querySelectorAll(".opt")[j].disabled=true;fb.className="fb show nope";fb.innerHTML="🤏 "+o.fb+src(o.s)+"<br>再揀過。"}
+ }
+ draw();
+};
+// ---- practice (countdown + checklist + model)
+R.practice=function(x,s,el,idx){
+ s.ck=s.ck||{};var T=null,n=x.sec;
+ el.innerHTML='<div class="box">'+(x.prompt?'<p style="margin-top:0">'+x.prompt+'</p>':'')+'<div class="ring">'+fmtS(n)+'</div><div class="row"><button class="btn cgo">開始倒數</button><button class="btn ghost crs">重置</button></div></div><div class="box check"><b>講完自己剔一剔：</b>'+x.checks.map(function(c,i){return '<label><input type="checkbox" class="ck" data-i="'+i+'"'+(s.ck[i]?" checked":"")+'> '+c+'</label>'}).join("")+'</div>'+(x.model?'<div class="box"><b>參考答案</b> <button class="btn ghost smodel" style="font-size:13px;padding:5px 10px;margin-left:6px">👀 睇答案</button><div class="model">'+x.model+'</div>'+src(x.s)+'</div>':'');
+ function fmtS(v){return v>=60?fmt(v):String(v)}
+ var ring=el.querySelector(".ring");
+ el.querySelector(".cgo").onclick=function(){if(T)return;n=x.sec;ring.textContent=fmtS(n);ring.style.color="";T=setInterval(function(){n--;ring.textContent=fmtS(n);if(n<=5)ring.style.color="var(--bad)";if(n<=0){clearInterval(T);T=null;ring.textContent="完 👏";if(!s.c){addPts(20);complete(idx)}}},1000)};
+ el.querySelector(".crs").onclick=function(){clearInterval(T);T=null;n=x.sec;ring.textContent=fmtS(n);ring.style.color=""};
+ var sm=el.querySelector(".smodel");if(sm)sm.onclick=function(){var m=el.querySelector(".model");m.classList.toggle("show");sm.textContent=m.classList.contains("show")?"🙈 收埋":"👀 睇答案"};
+ el.querySelectorAll(".ck").forEach(function(c){c.onchange=function(){var i=c.dataset.i;if(c.checked&&!s.ck[i]){s.ck[i]=1;addPts(4)}save()}});
+};
+function finish(){
+ var B=D.badges,b=st.pts>=B[0][0]?B[0]:st.pts>=B[1][0]?B[1]:B[2];
+ $("fscore").textContent=st.pts;$("badge").innerHTML='<span class="e">'+b[1]+'</span><span>'+b[2]+'</span>';
+ var c=0;for(var i=0;i<N;i++)if(S(i+1).c)c++;
+ $("fsum").innerHTML="完成 "+c+"/"+N+" 關 · 用咗 "+fmt(TOTAL-st.time)+(D.nextDay?"<br>"+D.bye:"<br>"+D.bye);
+ if(!st.done){st.done=true;st.doneDate=todayISO()}st.marked=false;st.score=st.pts;save();confetti(120);
+}
+$("tbtn").onclick=function(){st.run=!st.run;tick();save()};
+$("next").onclick=nextStep;$("back").onclick=function(){go(st.step-1)};
+$("startBtn").onclick=function(){go(1)};
+function reset(){localStorage.removeItem(KEY);mount(D)}
+$("resetBtn").onclick=reset;$("again").onclick=reset;
+$("pts").textContent=st.pts;tick();go(st.step);
+}
+
+var C=window.COURSE;
+function ld(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}}
+function streak(){var set={};C.forEach(function(d){var s=ld(d.key);if(s&&s.done&&s.doneDate)set[s.doneDate]=1});
+ var d=new Date(),n=0;if(!set[todayISO()])d.setDate(d.getDate()-1);
+ while(true){var k=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");if(!set[k])break;n++;d.setDate(d.getDate()-1)}return n}
+function home(){
+ clearInterval(TIMER);document.body.classList.add("home");document.getElementById("htitle").textContent="Sunderland HK 自學課程";
+ var t=todayISO(),done=0,pts=0,avail=0;
+ var rows=C.map(function(d){var s=ld(d.key);if(!d.soon)avail++;if(s&&s.done){done++;pts+=(s.score||0)}
+  var cls="box day"+(s&&s.done?" ok":"")+(d.soon?" soon":"")+(d.iso==t?" today":"");
+  var st=d.soon?"🔒 Coming soon":s&&s.done?(s.marked?"✅ 已標記完成":"✅ 完成 · "+s.score+" 分"):s&&s.step>0?"⏳ 做緊":"未開始";
+  var btn=(!d.soon&&!(s&&s.done))?'<button class="mark" data-k="'+d.key+'">✔ 我做咗喇</button>':'';
+  var inner=(d.iso==t?'<span class="today-tag">今日</span>':'')+'<div class="dn">D'+d.n+'</div><div class="dt"><b>'+d.title+'</b><br><small>'+d.date+(d.minutes?' · '+d.minutes+' 分鐘':'')+'</small><div class="st">'+st+'</div></div>'+btn;
+  return d.soon?'<div class="'+cls+'">'+inner+'</div>':'<a class="'+cls+'" href="#day'+d.n+'" id="card'+d.n+'">'+inner+'</a>'});
+ var pct=Math.round(done/C.length*100);document.getElementById("prog").style.width=pct+"%";var sk=streak();document.getElementById("hstreak").textContent=sk;
+ document.getElementById("home").innerHTML='<section class="on"><h2>自學課程 📚</h2><p class="sub">每日大約 15 分鐘，一日一課。</p><div class="kpis"><div class="kpi"><b>'+done+'/'+C.length+'</b><small>總進度 '+pct+'%</small></div><div class="kpi"><b>'+pts+'</b><small>總分</small></div><div class="kpi"><b>🔥 '+sk+'</b><small>連續日數</small></div></div>'+rows.join("")+'</section>';
+ document.querySelectorAll(".mark").forEach(function(b){b.onclick=function(e){e.preventDefault();e.stopPropagation();var s=ld(b.dataset.k)||{};s.done=true;s.marked=true;s.doneDate=todayISO();s.step=s.step||0;localStorage.setItem(b.dataset.k,JSON.stringify(s));home()}});
+ window.scrollTo(0,0);
+ var td=document.querySelector(".day.today");if(td&&td.getBoundingClientRect().top>window.innerHeight-80)td.scrollIntoView({block:"center"});
+}
+function route(){var m=location.hash.match(/^#day(\d+)$/);var d=m&&C[+m[1]-1];
+ if(d&&!d.soon){document.body.classList.remove("home");mount(d)}else home()}
+window.addEventListener("hashchange",route);route();
+</script></body></html>
